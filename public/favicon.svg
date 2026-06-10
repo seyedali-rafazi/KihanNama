@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <rect width="64" height="64" rx="14" fill="#0f1113"/>
+  <circle cx="32" cy="34" r="18" fill="#1976d2" opacity="0.15"/>
+  <circle cx="32" cy="34" r="16" stroke="#1976d2" stroke-width="2" fill="url(#globeGrad)"/>
+  <ellipse cx="32" cy="34" rx="16" ry="6" stroke="rgba(66,165,245,0.45)" stroke-width="1"/>
+  <ellipse cx="32" cy="34" rx="6" ry="16" stroke="rgba(66,165,245,0.35)" stroke-width="1"/>
+  <circle cx="32" cy="34" r="2.5" fill="#42a5f5"/>
+  <circle cx="48" cy="20" r="3" fill="#42a5f5"/>
+  <path d="M48 20 L44 24" stroke="#42a5f5" stroke-width="1.2" stroke-linecap="round"/>
+  <ellipse cx="32" cy="34" rx="22" ry="8" stroke="#1976d2" stroke-width="1.5" stroke-dasharray="4 3" transform="rotate(-20 32 34)"/>
+  <defs>
+    <radialGradient id="globeGrad" cx="0.35" cy="0.35" r="0.75">
+      <stop offset="0%" stop-color="#1e3a5f"/>
+      <stop offset="100%" stop-color="#0d2137"/>
+    </radialGradient>
+  </defs>
+</svg>
