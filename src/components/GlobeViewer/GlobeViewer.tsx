@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Box from '@mui/material/Box'
+import useMediaQuery from '@mui/material/useMediaQuery'
+import { useTheme } from '@mui/material/styles'
 import { Viewer, Globe, CzmlDataSource } from 'resium'
 import { Cartesian3, NearFarScalar } from 'cesium'
 import type { CesiumComponentRef } from 'resium'
@@ -18,6 +20,7 @@ import { useSatelliteInteractions } from './useSatelliteInteractions'
 import { useLoading } from '../../context/LoadingContext'
 
 const initialVisibility = Object.fromEntries(SATELLITES.map((s) => [s.id, true]))
+const HOME_VIEW = { lon: 0, lat: 20, altitudeDesktop: 25_000_000, altitudeMobile: 27_000_000 }
 
 function getDataSource(viewer: CesiumViewer, ref: CesiumCzmlDataSource | null) {
   if (ref) return ref
@@ -97,6 +100,8 @@ function applyEntitySettings(
 }
 
 function GlobeViewer() {
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
   const viewerRef = useRef<CesiumComponentRef<CesiumViewer>>(null)
   const dataSourceRef = useRef<CesiumCzmlDataSource | null>(null)
   const { markReady } = useLoading()
@@ -117,10 +122,27 @@ function GlobeViewer() {
       viewer.scene.postProcessStages.fxaa.enabled = true
     }
 
-    viewer.camera.setView({
-      destination: Cartesian3.fromDegrees(0, 20, 25_000_000),
-    })
   }, [])
+
+  useEffect(() => {
+    let raf = 0
+
+    const applyHomeView = () => {
+      const viewer = viewerRef.current?.cesiumElement
+      if (!viewer) {
+        raf = requestAnimationFrame(applyHomeView)
+        return
+      }
+
+      const altitude = isMobile ? HOME_VIEW.altitudeMobile : HOME_VIEW.altitudeDesktop
+      viewer.camera.setView({
+        destination: Cartesian3.fromDegrees(HOME_VIEW.lon, HOME_VIEW.lat, altitude),
+      })
+    }
+
+    applyHomeView()
+    return () => cancelAnimationFrame(raf)
+  }, [isMobile])
 
   useEffect(() => {
     let raf = 0
@@ -189,8 +211,8 @@ function GlobeViewer() {
     }
 
     const sat = SATELLITES.find((s) => s.id === id)
-    void flyToSatelliteEntity(viewer, entity, sat?.altitude)
-  }, [visibility])
+    void flyToSatelliteEntity(viewer, entity, sat?.altitude, isMobile ? 1.35 : 1)
+  }, [visibility, isMobile])
 
   const { activeBadgeId, pinnedSatelliteId, pinSatellite } = useSatelliteInteractions({
     viewerRef,

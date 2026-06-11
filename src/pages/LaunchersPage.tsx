@@ -10,7 +10,7 @@ import PageHero from '../components/common/PageHero'
 import { sortCatalog, type CatalogEntry, type CatalogSortOption } from '../types/catalog'
 
 const LAUNCHER_HERO_IMAGE =
-  'https://images.unsplash.com/photo-1517976487492-5750f3195933?auto=format&fit=crop&w=1400&q=80'
+  '/launchers-page.webp'
 
 const CATEGORY_OPTIONS = [
   { value: 'heavyLift', labelKey: 'catHeavyLift' },

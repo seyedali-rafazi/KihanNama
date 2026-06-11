@@ -1,21 +1,117 @@
 <!doctype html>
-<html lang="en">
+<html lang="fa" dir="rtl">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <title>KihanNama | کیهان‌نما — Interactive 3D Satellite Tracker</title>
+    <meta
+      name="description"
+      content="KihanNama (کیهان‌نما) is an interactive 3D globe to track satellites in orbit, explore launch vehicles, and browse ground station catalogs. Available in English and Persian."
+    />
+    <meta
+      name="keywords"
+      content="KihanNama, کیهان‌نما, satellite tracker, 3D globe, Cesium, orbit map, space, launchers, ground stations, ماهواره, ردیابی ماهواره"
+    />
+    <meta name="author" content="KihanNama" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="googlebot" content="index, follow" />
+    <meta name="theme-color" content="#0f1113" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="application-name" content="KihanNama" />
+    <meta name="apple-mobile-web-app-title" content="KihanNama" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <link rel="canonical" href="__SITE_URL__/" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0f1113" />
-    <meta name="description" content="KihanNama — Interactive 3D globe for satellite tracking" />
+    <link rel="manifest" href="/site.webmanifest" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="KihanNama" />
+    <meta property="og:title" content="KihanNama | کیهان‌نما — Interactive 3D Satellite Tracker" />
+    <meta
+      property="og:description"
+      content="Track satellites on a 3D globe, browse launchers and ground stations. English and Persian."
+    />
+    <meta property="og:url" content="__SITE_URL__/" />
+    <meta property="og:locale" content="fa_IR" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:image" content="__SITE_URL__/satellite-page.webp" />
+    <meta property="og:image:alt" content="KihanNama satellite tracking globe" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="KihanNama | کیهان‌نما — Interactive 3D Satellite Tracker" />
+    <meta
+      name="twitter:description"
+      content="Track satellites on a 3D globe, browse launchers and ground stations."
+    />
+    <meta name="twitter:image" content="__SITE_URL__/satellite-page.webp" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Vazirmatn:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <title>Kihannama</title>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "__SITE_URL__/#website",
+            "url": "__SITE_URL__/",
+            "name": "KihanNama",
+            "alternateName": "کیهان‌نما",
+            "description": "Interactive 3D globe for satellite tracking, launchers, and ground stations.",
+            "inLanguage": ["fa-IR", "en-US"]
+          },
+          {
+            "@type": "WebApplication",
+            "@id": "__SITE_URL__/#app",
+            "name": "KihanNama",
+            "alternateName": "کیهان‌نما",
+            "url": "__SITE_URL__/",
+            "description": "Interactive 3D globe to track satellites in orbit, explore launch vehicles, and browse ground station catalogs.",
+            "applicationCategory": "EducationalApplication",
+            "operatingSystem": "Web",
+            "browserRequirements": "Requires JavaScript. Requires HTML5.",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "inLanguage": ["fa-IR", "en-US"],
+            "isPartOf": { "@id": "__SITE_URL__/#website" }
+          },
+          {
+            "@type": "Organization",
+            "@id": "__SITE_URL__/#organization",
+            "name": "KihanNama",
+            "alternateName": "کیهان‌نما",
+            "url": "__SITE_URL__/"
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
+    <noscript>
+      <h1>KihanNama | کیهان‌نما</h1>
+      <p>Interactive 3D globe for satellite tracking, launchers, and ground stations.</p>
+      <p>Please enable JavaScript to use this application.</p>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/satellites">Satellites</a></li>
+        <li><a href="/launchers">Launchers</a></li>
+        <li><a href="/satellite-station">Satellite Station</a></li>
+      </ul>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

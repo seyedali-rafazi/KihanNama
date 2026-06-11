@@ -50,12 +50,14 @@ function SatelliteRow({
   onToggleVisibility,
   onZoomToSatellite,
   zoomLabel,
+  simple = false,
 }: {
   sat: SatelliteInfo
   visible: boolean
   onToggleVisibility: (id: string) => void
   onZoomToSatellite: (id: string) => void
   zoomLabel: string
+  simple?: boolean
 }) {
   const theme = useTheme()
   const color = `rgb(${sat.color[0]}, ${sat.color[1]}, ${sat.color[2]})`
@@ -68,20 +70,23 @@ function SatelliteRow({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 1.25,
-        px: 1.25,
+        px: simple ? 2 : 1.25,
         py: 1,
-        mx: 1,
-        mb: 1,
-        borderRadius: '10px',
-        border: `1px solid ${alpha(color, 0.35)}`,
-        bgcolor: alpha(color, 0.06),
+        mx: simple ? 0 : 1,
+        mb: simple ? 0 : 1,
+        borderRadius: simple ? 0 : '10px',
+        border: simple ? 'none' : `1px solid ${alpha(color, 0.35)}`,
+        borderBottom: simple ? `1px solid ${theme.palette.divider}` : undefined,
+        bgcolor: simple ? 'transparent' : alpha(color, 0.06),
         opacity: visible ? 1 : 0.5,
-        transition: 'opacity 0.2s, border-color 0.2s',
-        '&:hover': {
-          borderColor: alpha(color, 0.55),
-          bgcolor: alpha(color, 0.1),
-        },
-        '&:last-child': { mb: 0.5 },
+        transition: simple ? 'opacity 0.2s, background-color 0.2s' : 'opacity 0.2s, border-color 0.2s',
+        '&:hover': simple
+          ? { bgcolor: alpha(theme.palette.common.white, 0.04) }
+          : {
+              borderColor: alpha(color, 0.55),
+              bgcolor: alpha(color, 0.1),
+            },
+        '&:last-child': { mb: simple ? 0 : 0.5, borderBottom: simple ? 'none' : undefined },
       }}
     >
       <Avatar
@@ -90,7 +95,7 @@ function SatelliteRow({
           width: 40,
           height: 40,
           borderRadius: '8px',
-          border: `1.5px solid ${color}`,
+          border: simple ? 'none' : `1.5px solid ${color}`,
           bgcolor: alpha(theme.palette.common.black, 0.35),
           flexShrink: 0,
           overflow: 'hidden',
@@ -166,11 +171,13 @@ function MapStyleCard({
   label,
   selected,
   onClick,
+  simple = false,
 }: {
   preview: string
   label: string
   selected: boolean
   onClick: () => void
+  simple?: boolean
 }) {
   const theme = useTheme()
 
@@ -183,13 +190,21 @@ function MapStyleCard({
         flexDirection: 'column',
         height: '100%',
         borderRadius: `${theme.shape.borderRadius}px`,
-        border: `2px solid ${selected ? theme.palette.primary.main : theme.palette.divider}`,
+        border: simple
+          ? 'none'
+          : `2px solid ${selected ? theme.palette.primary.main : theme.palette.divider}`,
         overflow: 'hidden',
-        bgcolor: alpha(theme.palette.common.black, 0.2),
-        transition: 'border-color 0.2s',
-        '&:hover': {
-          borderColor: selected ? theme.palette.primary.main : alpha(theme.palette.primary.main, 0.5),
-        },
+        bgcolor: simple
+          ? selected
+            ? alpha(theme.palette.primary.main, 0.14)
+            : alpha(theme.palette.common.black, 0.15)
+          : alpha(theme.palette.common.black, 0.2),
+        transition: 'background-color 0.2s, border-color 0.2s',
+        '&:hover': simple
+          ? { bgcolor: alpha(theme.palette.primary.main, selected ? 0.18 : 0.08) }
+          : {
+              borderColor: selected ? theme.palette.primary.main : alpha(theme.palette.primary.main, 0.5),
+            },
       }}
     >
       <Box
@@ -233,11 +248,13 @@ function SatellitesContent({
   onToggleVisibility,
   onZoomToSatellite,
   zoomLabel,
+  simple = false,
 }: {
   visibility: Record<string, boolean>
   onToggleVisibility: (id: string) => void
   onZoomToSatellite: (id: string) => void
   zoomLabel: string
+  simple?: boolean
 }) {
   return (
     <>
@@ -249,6 +266,7 @@ function SatellitesContent({
           onToggleVisibility={onToggleVisibility}
           onZoomToSatellite={onZoomToSatellite}
           zoomLabel={zoomLabel}
+          simple={simple}
         />
       ))}
     </>
@@ -259,10 +277,12 @@ function MapContent({
   mapType,
   onMapTypeChange,
   t,
+  simple = false,
 }: {
   mapType: MapType
   onMapTypeChange: (mapType: MapType) => void
   t: (key: TranslationKey) => string
+  simple?: boolean
 }) {
   return (
     <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, alignItems: 'stretch' }}>
@@ -273,6 +293,7 @@ function MapContent({
           label={t(option.labelKey)}
           selected={mapType === option.type}
           onClick={() => onMapTypeChange(option.type)}
+          simple={simple}
         />
       ))}
     </Box>
@@ -396,7 +417,7 @@ function GlobeControlPanel({
     setMobileOpen((prev) => (prev === panel ? false : panel))
   }
 
-  const renderPanelContent = (panel: PanelSection) => {
+  const renderPanelContent = (panel: PanelSection, simple = false) => {
     switch (panel) {
       case 'satellites':
         return (
@@ -405,10 +426,11 @@ function GlobeControlPanel({
             onToggleVisibility={onToggleVisibility}
             onZoomToSatellite={onZoomToSatellite}
             zoomLabel={t('zoomToSatellite')}
+            simple={simple}
           />
         )
       case 'map':
-        return <MapContent mapType={mapType} onMapTypeChange={onMapTypeChange} t={t} />
+        return <MapContent mapType={mapType} onMapTypeChange={onMapTypeChange} t={t} simple={simple} />
       case 'settings':
         return <SettingsContent settings={settings} onSettingsChange={onSettingsChange} t={t} />
     }
@@ -562,7 +584,7 @@ function GlobeControlPanel({
                   },
                 }}
               >
-                {renderPanelContent(activePanel)}
+                {renderPanelContent(activePanel, true)}
               </Box>
             </Box>
           )}
@@ -586,13 +608,8 @@ function GlobeControlPanel({
         direction: 'ltr',
         textAlign: 'left',
         p: 0.5,
-        ...glassPanel,
-        borderRadius: '16px',
         '&::-webkit-scrollbar': { width: 4 },
-        '&::-webkit-scrollbar-thumb': {
-          bgcolor: alpha(theme.palette.common.white, 0.15),
-          borderRadius: 4,
-        },
+        
       }}
     >
       <Accordion

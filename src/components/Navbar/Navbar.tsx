@@ -335,8 +335,6 @@ function Navbar() {
                 '&.Mui-selected': {
                   bgcolor: alpha(theme.palette.primary.main, 0.18),
                   color: 'primary.light',
-                  borderInlineStart: '3px solid',
-                  borderColor: 'primary.main',
                   '&:hover': { bgcolor: alpha(theme.palette.primary.main, 0.24) },
                 },
                 '&:hover': { bgcolor: alpha(theme.palette.common.white, 0.05) },

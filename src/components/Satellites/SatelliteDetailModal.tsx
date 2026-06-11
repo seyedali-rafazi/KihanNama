@@ -9,6 +9,11 @@ import { alpha, useTheme } from '@mui/material/styles'
 import { useLanguage } from '../../context/LanguageContext'
 import type { InfographicSection, SatelliteCatalogEntry } from '../../types/satellite'
 import FallbackImage from '../common/FallbackImage'
+import {
+  getDetailInfoBlockSx,
+  getDetailModalBackdropSx,
+  getDetailModalPaperSx,
+} from '../common/detailModalStyles'
 
 type SatelliteDetailModalProps = {
   satellite: SatelliteCatalogEntry | null
@@ -18,11 +23,9 @@ type SatelliteDetailModalProps = {
 
 function InfoBlock({
   section,
-  align,
   color,
 }: {
   section: InfographicSection
-  align: 'left' | 'right'
   color: string
 }) {
   const { language } = useLanguage()
@@ -30,15 +33,7 @@ function InfoBlock({
   const description = language === 'fa' ? section.descriptionFa : section.descriptionEn
 
   return (
-    <Box
-      sx={{
-        p: 1.5,
-        borderRadius: 1.5,
-        bgcolor: alpha(color, 0.06),
-        border: `1px solid ${alpha(color, 0.15)}`,
-        textAlign: align === 'left' ? 'left' : 'right',
-      }}
-    >
+    <Box sx={getDetailInfoBlockSx(color)}>
       <Typography
         variant="caption"
         sx={{
@@ -87,14 +82,8 @@ function SatelliteDetailModal({ satellite, open, onClose }: SatelliteDetailModal
       maxWidth="md"
       fullWidth
       slotProps={{
-        paper: {
-          sx: {
-            bgcolor: 'background.paper',
-            border: `1px solid ${theme.palette.divider}`,
-            borderRadius: 2,
-            maxHeight: '92vh',
-          },
-        },
+        backdrop: { sx: getDetailModalBackdropSx() },
+        paper: { sx: getDetailModalPaperSx(theme) },
       }}
     >
       <Box
@@ -104,7 +93,7 @@ function SatelliteDetailModal({ satellite, open, onClose }: SatelliteDetailModal
           justifyContent: 'space-between',
           px: 2.5,
           py: 2,
-          borderBottom: `1px solid ${theme.palette.divider}`,
+          borderBottom: `1px solid ${alpha(theme.palette.common.white, 0.08)}`,
         }}
       >
         <Box>
@@ -115,7 +104,7 @@ function SatelliteDetailModal({ satellite, open, onClose }: SatelliteDetailModal
             {operator} · {satellite.launchYear}
           </Typography>
         </Box>
-        <IconButton onClick={onClose} size="small">
+        <IconButton onClick={onClose} size="small" sx={{ color: 'text.secondary' }}>
           <CloseIcon />
         </IconButton>
       </Box>
@@ -128,9 +117,19 @@ function SatelliteDetailModal({ satellite, open, onClose }: SatelliteDetailModal
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75, mb: 3 }}>
           <Chip label={categoryLabels[satellite.category]} size="small" sx={{ bgcolor: alpha(color, 0.12), color, fontWeight: 600 }} />
           <Chip label={satellite.orbitClass.toUpperCase()} size="small" variant="outlined" sx={{ borderColor: alpha(color, 0.4), color }} />
-          <Chip label={`${t('orbitSteps')}: ${satellite.orbitSteps}`} size="small" variant="outlined" />
+          <Chip
+            label={`${t('orbitSteps')}: ${satellite.orbitSteps}`}
+            size="small"
+            variant="outlined"
+            sx={{ borderColor: alpha(theme.palette.common.white, 0.15) }}
+          />
           {abilities.map((ability) => (
-            <Chip key={ability} label={ability} size="small" sx={{ bgcolor: 'grey.A100', fontSize: '0.72rem' }} />
+            <Chip
+              key={ability}
+              label={ability}
+              size="small"
+              sx={{ bgcolor: alpha(theme.palette.common.white, 0.08), fontSize: '0.72rem' }}
+            />
           ))}
         </Box>
 
@@ -144,11 +143,21 @@ function SatelliteDetailModal({ satellite, open, onClose }: SatelliteDetailModal
             gridTemplateColumns: { xs: '1fr', md: '1fr auto 1fr' },
             gap: { xs: 2, md: 2.5 },
             alignItems: 'center',
+            justifyItems: 'center',
           }}
         >
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.25, order: { xs: 2, md: 1 } }}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 1.25,
+              order: { xs: 2, md: 1 },
+              width: '100%',
+            }}
+          >
             {satellite.infographicLeft.map((section) => (
-              <InfoBlock key={section.titleEn} section={section} align="left" color={color} />
+              <InfoBlock key={section.titleEn} section={section} color={color} />
             ))}
           </Box>
 
@@ -183,8 +192,8 @@ function SatelliteDetailModal({ satellite, open, onClose }: SatelliteDetailModal
                   height: '100%',
                   borderRadius: '50%',
                   objectFit: 'cover',
-                  bgcolor: 'background.default',
-                  border: `3px solid ${theme.palette.background.paper}`,
+                  bgcolor: '#000',
+                  border: `3px solid ${alpha(theme.palette.common.white, 0.12)}`,
                 }}
               />
             </Box>
@@ -193,9 +202,18 @@ function SatelliteDetailModal({ satellite, open, onClose }: SatelliteDetailModal
             </Typography>
           </Box>
 
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.25, order: { xs: 3, md: 3 } }}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: 1.25,
+              order: { xs: 3, md: 3 },
+              width: '100%',
+            }}
+          >
             {satellite.infographicRight.map((section) => (
-              <InfoBlock key={section.titleEn} section={section} align="right" color={color} />
+              <InfoBlock key={section.titleEn} section={section} color={color} />
             ))}
           </Box>
         </Box>

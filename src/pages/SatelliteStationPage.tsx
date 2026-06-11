@@ -10,7 +10,7 @@ import PageHero from '../components/common/PageHero'
 import { sortCatalog, type CatalogEntry, type CatalogSortOption } from '../types/catalog'
 
 const STATION_HERO_IMAGE =
-  'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=1400&q=80'
+  '/space-station.webp'
 
 const CATEGORY_OPTIONS = [
   { value: 'tracking', labelKey: 'catTracking' },

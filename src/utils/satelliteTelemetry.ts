@@ -65,11 +65,12 @@ export async function flyToSatelliteEntity(
   viewer: CesiumViewer,
   entity: Entity,
   satelliteAltitude = 500_000,
+  rangeMultiplier = 1,
 ) {
   viewer.trackedEntity = undefined
   viewer.selectedEntity = entity
 
-  const cameraRange = Math.max(satelliteAltitude * 3, 2_000_000)
+  const cameraRange = Math.max(satelliteAltitude * 3 * rangeMultiplier, 2_000_000 * rangeMultiplier)
 
   await viewer.flyTo(entity, {
     duration: 1.5,

@@ -10,7 +10,7 @@ import PageHero from '../components/common/PageHero'
 import type { OrbitClass, SatelliteCatalogEntry, SatelliteCategory, SortOption } from '../types/satellite'
 
 const SATELLITE_HERO_IMAGE =
-  'https://images.unsplash.com/photo-1614728263952-84ea256f9679?auto=format&fit=crop&w=1400&q=80'
+  '/satellite-page.webp'
 
 function sortSatellites(items: SatelliteCatalogEntry[], sort: SortOption) {
   const sorted = [...items]

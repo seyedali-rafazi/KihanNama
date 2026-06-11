@@ -1,6 +1,7 @@
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { alpha, keyframes, useTheme } from '@mui/material/styles'
+import { useLanguage } from '../../context/LanguageContext'
 
 type PageHeroProps = {
   title: string
@@ -19,6 +20,9 @@ const heroZoom = keyframes`
 
 function PageHero({ title, subtitle, imageUrl }: PageHeroProps) {
   const theme = useTheme()
+  const { dir } = useLanguage()
+  const isRtl = dir === 'rtl'
+  const textAlign = isRtl ? 'right' : 'left'
 
   return (
     <Box
@@ -26,10 +30,9 @@ function PageHero({ title, subtitle, imageUrl }: PageHeroProps) {
         position: 'relative',
         width: '100%',
         minHeight: { xs: 200, sm: 260 },
-        borderRadius: { xs: 0, sm: 3 },
+        borderRadius: 3,
         overflow: 'hidden',
         mb: { xs: 3, sm: 4 },
-        mx: { xs: -2, sm: 0 },
       }}
     >
       <Box
@@ -42,7 +45,9 @@ function PageHero({ title, subtitle, imageUrl }: PageHeroProps) {
           width: '100%',
           height: '100%',
           objectFit: 'cover',
+          objectPosition: 'center center',
           transform: 'scale(1)',
+          transformOrigin: 'center center',
           animation: `${heroZoom} 22s cubic-bezier(0.25, 0.1, 0.25, 1) infinite alternate`,
           willChange: 'transform',
         }}
@@ -55,19 +60,23 @@ function PageHero({ title, subtitle, imageUrl }: PageHeroProps) {
         }}
       />
       <Box
+        dir={dir}
         sx={{
           position: 'relative',
           zIndex: 1,
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'flex-end',
+          width: '100%',
           minHeight: { xs: 200, sm: 260 },
           px: { xs: 3, sm: 4 },
           py: { xs: 3, sm: 4 },
+          direction: dir,
         }}
       >
         <Typography
           variant="h4"
+          style={{ textAlign, width: '100%' }}
           sx={{
             fontWeight: 700,
             mb: 1,
@@ -80,7 +89,8 @@ function PageHero({ title, subtitle, imageUrl }: PageHeroProps) {
         <Typography
           variant="body1"
           color="text.secondary"
-          sx={{ maxWidth: 560, textShadow: '0 1px 8px rgba(0,0,0,0.4)' }}
+          style={{ textAlign, width: '100%', maxWidth: 560 }}
+          sx={{ textShadow: '0 1px 8px rgba(0,0,0,0.4)' }}
         >
           {subtitle}
         </Typography>
