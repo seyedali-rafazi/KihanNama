@@ -7,7 +7,7 @@ import { useTheme } from '@mui/material/styles'
 import type { Viewer as CesiumViewer } from 'cesium'
 import type { CesiumComponentRef } from 'resium'
 import { useLanguage } from '../../../context/LanguageContext'
-import { getCesiumViewer } from './cesiumUtils'
+import { getCesiumViewer, smoothCameraZoom } from './cesiumUtils'
 import { getNavButtonSx } from './navButtonStyles'
 import CompassControl from './CompassControl'
 
@@ -19,18 +19,10 @@ function ZoomControl({ viewerRef }: ZoomControlProps) {
   const theme = useTheme()
   const { t } = useLanguage()
 
-  const handleZoomIn = () => {
+  const handleZoom = (zoomIn: boolean) => {
     const viewer = getCesiumViewer(viewerRef)
     if (!viewer) return
-    const height = viewer.camera.positionCartographic.height
-    viewer.camera.zoomIn(height * 0.35)
-  }
-
-  const handleZoomOut = () => {
-    const viewer = getCesiumViewer(viewerRef)
-    if (!viewer) return
-    const height = viewer.camera.positionCartographic.height
-    viewer.camera.zoomOut(height * 0.35)
+    smoothCameraZoom(viewer, zoomIn)
   }
 
   return (
@@ -38,12 +30,11 @@ function ZoomControl({ viewerRef }: ZoomControlProps) {
       sx={{
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: '#353535',
-        borderRadius: '24px',
+        alignItems: 'center',
       }}
     >
       <Tooltip title={t('zoomIn')} placement="left" arrow>
-        <IconButton onClick={handleZoomIn} size="medium" sx={getNavButtonSx(theme)}>
+        <IconButton onClick={() => handleZoom(true)} size="small" sx={getNavButtonSx(theme)}>
           <AddIcon fontSize="small" />
         </IconButton>
       </Tooltip>
@@ -51,7 +42,7 @@ function ZoomControl({ viewerRef }: ZoomControlProps) {
       <CompassControl viewerRef={viewerRef} />
 
       <Tooltip title={t('zoomOut')} placement="left" arrow>
-        <IconButton onClick={handleZoomOut} size="medium" sx={getNavButtonSx(theme)}>
+        <IconButton onClick={() => handleZoom(false)} size="small" sx={getNavButtonSx(theme)}>
           <RemoveIcon fontSize="small" />
         </IconButton>
       </Tooltip>

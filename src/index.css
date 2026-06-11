@@ -9,3 +9,25 @@ body,
 .cesium-viewer-bottom{
   display: none !important;
 }
+
+.language-select[dir="rtl"] .MuiSelect-select {
+  justify-content: flex-end !important;
+  padding-left: 32px !important;
+  padding-right: 14px !important;
+}
+
+.language-select[dir="rtl"] .MuiSelect-icon {
+  left: 7px !important;
+  right: auto !important;
+}
+
+.language-select[dir="ltr"] .MuiSelect-select {
+  justify-content: flex-start !important;
+  padding-right: 32px !important;
+  padding-left: 14px !important;
+}
+
+.language-select[dir="rtl"] .MuiMenuItem-root {
+  justify-content: flex-end;
+  text-align: right;
+}

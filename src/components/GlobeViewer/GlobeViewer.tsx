@@ -17,6 +17,7 @@ import { createSatelliteBillboardCanvas, SATELLITE_BILLBOARD_DISPLAY_SIZE } from
 import { DEFAULT_ORBIT_SETTINGS, type MapType, type OrbitSettings } from '../../types/globe'
 import GlobeControlPanel from './GlobeControlPanel'
 import GlobeMapControls from './GlobeMapControls'
+import GlobeUiLayer from './GlobeUiLayer'
 import { useLoading } from '../../context/LoadingContext'
 
 const initialVisibility = Object.fromEntries(SATELLITES.map((s) => [s.id, true]))
@@ -232,17 +233,19 @@ function GlobeViewer() {
         <CzmlDataSource data={czmlData} onLoad={handleCzmlLoad} />
       </Viewer>
 
-      <GlobeControlPanel
-        visibility={visibility}
-        mapType={mapType}
-        settings={settings}
-        onToggleVisibility={handleToggleVisibility}
-        onZoomToSatellite={handleZoomToSatellite}
-        onMapTypeChange={setMapType}
-        onSettingsChange={handleSettingsChange}
-      />
+      <GlobeUiLayer>
+        <GlobeControlPanel
+          visibility={visibility}
+          mapType={mapType}
+          settings={settings}
+          onToggleVisibility={handleToggleVisibility}
+          onZoomToSatellite={handleZoomToSatellite}
+          onMapTypeChange={setMapType}
+          onSettingsChange={handleSettingsChange}
+        />
 
-      <GlobeMapControls viewerRef={viewerRef} />
+        <GlobeMapControls viewerRef={viewerRef} />
+      </GlobeUiLayer>
     </Box>
   )
 }

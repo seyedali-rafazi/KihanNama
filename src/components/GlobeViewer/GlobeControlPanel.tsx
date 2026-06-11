@@ -57,31 +57,41 @@ function SatelliteRow({
   onZoomToSatellite: (id: string) => void
   zoomLabel: string
 }) {
+  const theme = useTheme()
   const color = `rgb(${sat.color[0]}, ${sat.color[1]}, ${sat.color[2]})`
 
   return (
     <Box
+      dir="ltr"
       sx={{
         display: 'flex',
+        flexDirection: 'row',
         alignItems: 'center',
-        gap: 1.5,
-        px: 1.5,
-        py: 1.1,
-        opacity: visible ? 1 : 0.55,
-        transition: 'opacity 0.2s',
+        gap: 1.25,
+        px: 1.25,
+        py: 1,
+        mx: 1,
+        mb: 1,
+        borderRadius: '10px',
+        border: `1px solid ${alpha(color, 0.35)}`,
+        bgcolor: alpha(color, 0.06),
+        opacity: visible ? 1 : 0.5,
+        transition: 'opacity 0.2s, border-color 0.2s',
         '&:hover': {
-          bgcolor: 'rgba(255, 255, 255, 0.04)',
+          borderColor: alpha(color, 0.55),
+          bgcolor: alpha(color, 0.1),
         },
+        '&:last-child': { mb: 0.5 },
       }}
     >
       <Avatar
         variant="rounded"
         sx={{
-          width: 44,
-          height: 44,
-          borderRadius: '10px',
-          border: `2px solid ${color}`,
-          bgcolor: 'rgba(0,0,0,0.3)',
+          width: 40,
+          height: 40,
+          borderRadius: '8px',
+          border: `1.5px solid ${color}`,
+          bgcolor: alpha(theme.palette.common.black, 0.35),
           flexShrink: 0,
           overflow: 'hidden',
         }}
@@ -101,7 +111,7 @@ function SatelliteRow({
         sx={{
           flex: 1,
           fontWeight: 600,
-          fontSize: '0.85rem',
+          fontSize: '0.82rem',
           color,
           lineHeight: 1.3,
           overflow: 'hidden',
@@ -112,45 +122,38 @@ function SatelliteRow({
         {sat.name}
       </Typography>
 
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 0.25,
-          flexShrink: 0,
-          p: 0.4,
-          borderRadius: '50px',
-          bgcolor: 'rgba(255, 255, 255, 0.06)',
-          border: `1px solid ${color}55`,
-        }}
-      >
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.25, flexShrink: 0 }}>
         <IconButton
           size="small"
           onClick={() => onZoomToSatellite(sat.id)}
           title={zoomLabel}
           sx={{
-            width: 30,
-            height: 30,
+            width: 28,
+            height: 28,
+            p: 0.5,
             color,
-            '&:hover': { bgcolor: `${color}22` },
+            borderRadius: 1,
+            '&:hover': { bgcolor: alpha(color, 0.15) },
           }}
         >
-          <ZoomInIcon sx={{ fontSize: 17 }} />
+          <ZoomInIcon sx={{ fontSize: 16 }} />
         </IconButton>
         <IconButton
           size="small"
           onClick={() => onToggleVisibility(sat.id)}
           sx={{
-            width: 30,
-            height: 30,
-            color: visible ? color : 'rgba(255,255,255,0.35)',
-            '&:hover': { bgcolor: `${color}22` },
+            width: 28,
+            height: 28,
+            p: 0.5,
+            color: visible ? color : 'text.disabled',
+            borderRadius: 1,
+            '&:hover': { bgcolor: alpha(color, 0.15) },
           }}
         >
           {visible ? (
-            <VisibilityIcon sx={{ fontSize: 17 }} />
+            <VisibilityIcon sx={{ fontSize: 16 }} />
           ) : (
-            <VisibilityOffIcon sx={{ fontSize: 17 }} />
+            <VisibilityOffIcon sx={{ fontSize: 16 }} />
           )}
         </IconButton>
       </Box>
@@ -176,14 +179,16 @@ function MapStyleCard({
       onClick={onClick}
       sx={{
         cursor: 'pointer',
+        display: 'flex',
+        flexDirection: 'column',
+        height: '100%',
         borderRadius: `${theme.shape.borderRadius}px`,
         border: `2px solid ${selected ? theme.palette.primary.main : theme.palette.divider}`,
         overflow: 'hidden',
         bgcolor: alpha(theme.palette.common.black, 0.2),
-        transition: 'border-color 0.2s, transform 0.2s',
+        transition: 'border-color 0.2s',
         '&:hover': {
           borderColor: selected ? theme.palette.primary.main : alpha(theme.palette.primary.main, 0.5),
-          transform: 'translateY(-1px)',
         },
       }}
     >
@@ -193,7 +198,8 @@ function MapStyleCard({
         alt={label}
         sx={{
           width: '100%',
-          height: 80,
+          height: 72,
+          flexShrink: 0,
           objectFit: 'cover',
           display: 'block',
         }}
@@ -202,11 +208,16 @@ function MapStyleCard({
         variant="caption"
         align="center"
         sx={{
-          display: 'block',
-          py: 0.75,
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: 44,
+          py: 0.5,
           px: 0.5,
-          fontSize: '0.72rem',
+          fontSize: '0.7rem',
           fontWeight: selected ? 600 : 500,
+          lineHeight: 1.25,
           color: selected ? 'primary.light' : 'text.secondary',
           bgcolor: selected ? alpha(theme.palette.primary.main, 0.12) : 'transparent',
         }}
@@ -254,7 +265,7 @@ function MapContent({
   t: (key: TranslationKey) => string
 }) {
   return (
-    <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1 }}>
+    <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 1, alignItems: 'stretch' }}>
       {MAP_STYLE_OPTIONS.map((option) => (
         <MapStyleCard
           key={option.type}
@@ -432,6 +443,7 @@ function GlobeControlPanel({
     return (
       <>
         <Box
+          dir="ltr"
           sx={{
             position: 'fixed',
             bottom: 0,
@@ -561,6 +573,7 @@ function GlobeControlPanel({
 
   return (
     <Box
+      dir="ltr"
       sx={{
         position: 'absolute',
         top: 16,
@@ -571,6 +584,7 @@ function GlobeControlPanel({
         maxHeight: 'calc(100% - 32px)',
         overflowY: 'auto',
         direction: 'ltr',
+        textAlign: 'left',
         p: 0.5,
         ...glassPanel,
         borderRadius: '16px',

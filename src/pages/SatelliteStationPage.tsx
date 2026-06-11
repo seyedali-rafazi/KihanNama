@@ -6,7 +6,11 @@ import { STATION_CATALOG } from '../data/stationCatalog'
 import CatalogCard from '../components/Catalog/CatalogCard'
 import CatalogFilters from '../components/Catalog/CatalogFilters'
 import CatalogDetailModal from '../components/Catalog/CatalogDetailModal'
+import PageHero from '../components/common/PageHero'
 import { sortCatalog, type CatalogEntry, type CatalogSortOption } from '../types/catalog'
+
+const STATION_HERO_IMAGE =
+  'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=1400&q=80'
 
 const CATEGORY_OPTIONS = [
   { value: 'tracking', labelKey: 'catTracking' },
@@ -58,10 +62,11 @@ function SatelliteStationPage() {
   return (
     <Box sx={{ width: '100%', height: '100%', overflow: 'auto', bgcolor: 'background.default' }}>
       <Box sx={{ maxWidth: 1280, mx: 'auto', px: { xs: 2, sm: 3 }, py: { xs: 3, sm: 4 } }}>
-        <Box sx={{ mb: 3 }}>
-          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>{t('stationTitle')}</Typography>
-          <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 600 }}>{t('stationSubtitle')}</Typography>
-        </Box>
+        <PageHero
+          title={t('stationTitle')}
+          subtitle={t('stationSubtitle')}
+          imageUrl={STATION_HERO_IMAGE}
+        />
 
         <CatalogFilters
           search={search}

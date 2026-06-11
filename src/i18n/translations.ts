@@ -124,7 +124,7 @@ export const translations = {
     loadingStepSatellites: 'داده ماهواره‌ها',
     loadingStepSatellitesDesc: 'بارگذاری مدارها، نشانگرها و داده ردیابی',
     language: 'زبان',
-    english: 'انگلیسی',
+    english: 'english',
     persian: 'فارسی',
     homeTitle: 'کاوش زمین',
     homeSubtitle: 'کره زمین سه‌بعدی برای ردیابی ماهواره‌ها',

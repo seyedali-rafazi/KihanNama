@@ -50,7 +50,7 @@ export function createAppTheme(direction: 'ltr' | 'rtl') {
       MuiDrawer: {
         styleOverrides: {
           paper: {
-            backgroundColor: '#1d1f20',
+            backgroundColor: '#000000',
             borderInlineEnd: '1px solid rgba(255, 255, 255, 0.08)',
           },
         },

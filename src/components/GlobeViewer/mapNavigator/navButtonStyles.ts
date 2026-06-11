@@ -1,19 +1,17 @@
 import type { Theme } from '@mui/material/styles'
+import { alpha } from '@mui/material/styles'
 
 export function getNavButtonSx(theme: Theme, active = false) {
   return {
     width: 36,
     height: 36,
-    borderRadius: '8px',
-    color: active ? 'primary.main' : 'text.secondary',
-    backgroundColor: active ? theme.palette.action.selected : 'transparent',
-    boxShadow: active ? 1 : 'none',
-    transition: 'all 0.2s ease',
+    borderRadius: 1,
+    color: active ? 'primary.light' : 'text.secondary',
+    backgroundColor: active ? alpha(theme.palette.primary.main, 0.2) : 'transparent',
+    transition: 'background-color 0.2s, color 0.2s',
     '&:hover': {
-      backgroundColor: `${theme.palette.primary.main} !important`,
-      color: 'white',
-      transform: 'scale(1.1)',
-      borderRadius: '24px',
+      backgroundColor: alpha(theme.palette.primary.main, 0.25),
+      color: 'text.primary',
     },
   }
 }

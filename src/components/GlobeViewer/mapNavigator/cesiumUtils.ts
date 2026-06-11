@@ -3,6 +3,7 @@ import {
   Cartesian2,
   Cartesian3,
   Cartographic,
+  EasingFunction,
   Math as CesiumMath,
   Rectangle,
 } from 'cesium'
@@ -54,4 +55,23 @@ export function resetCameraNorth(viewer: CesiumViewer) {
 
 export function getCameraHeadingDegrees(viewer: CesiumViewer) {
   return CesiumMath.toDegrees(viewer.camera.heading)
+}
+
+export function smoothCameraZoom(viewer: CesiumViewer, zoomIn: boolean) {
+  const { camera } = viewer
+  const center = camera.positionCartographic
+  const height = center.height
+  const factor = zoomIn ? 0.65 : 1 / 0.65
+  const nextHeight = Math.max(height * factor, 100)
+
+  camera.flyTo({
+    destination: Cartesian3.fromRadians(center.longitude, center.latitude, nextHeight),
+    orientation: {
+      heading: camera.heading,
+      pitch: camera.pitch,
+      roll: camera.roll,
+    },
+    duration: 0.45,
+    easingFunction: EasingFunction.QUADRATIC_OUT,
+  })
 }

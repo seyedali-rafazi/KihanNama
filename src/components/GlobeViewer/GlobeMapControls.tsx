@@ -1,4 +1,5 @@
-import Paper from '@mui/material/Paper'
+import Box from '@mui/material/Box'
+import { alpha, useTheme } from '@mui/material/styles'
 import type { Viewer as CesiumViewer } from 'cesium'
 import type { CesiumComponentRef } from 'resium'
 import FlyHome from './mapNavigator/FlyHome'
@@ -11,9 +12,11 @@ type GlobeMapControlsProps = {
 }
 
 function GlobeMapControls({ viewerRef }: GlobeMapControlsProps) {
+  const theme = useTheme()
+
   return (
-    <Paper
-      elevation={4}
+    <Box
+      dir="ltr"
       sx={{
         position: 'absolute',
         top: 16,
@@ -25,11 +28,13 @@ function GlobeMapControls({ viewerRef }: GlobeMapControlsProps) {
         alignItems: 'center',
         borderRadius: '12px',
         overflow: 'hidden',
-        backdropFilter: 'blur(10px)',
-        backgroundColor: 'background.paper',
-        border: '1px solid rgba(255,255,255,0.6)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        background: alpha('#0a0c0e', 0.82),
+        border: `1px solid ${theme.palette.divider}`,
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
         p: 0.5,
-        gap: 0.5,
+        gap: 0.25,
         width: 'fit-content',
       }}
     >
@@ -37,7 +42,7 @@ function GlobeMapControls({ viewerRef }: GlobeMapControlsProps) {
       <ZoomControl viewerRef={viewerRef} />
       <LocateUser viewerRef={viewerRef} />
       <BoxZoomControl viewerRef={viewerRef} />
-    </Paper>
+    </Box>
   )
 }
 

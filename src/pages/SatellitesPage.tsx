@@ -6,7 +6,11 @@ import { SATELLITE_CATALOG } from '../data/satelliteCatalog'
 import SatelliteCard from '../components/Satellites/SatelliteCard'
 import SatelliteFilters from '../components/Satellites/SatelliteFilters'
 import SatelliteDetailModal from '../components/Satellites/SatelliteDetailModal'
+import PageHero from '../components/common/PageHero'
 import type { OrbitClass, SatelliteCatalogEntry, SatelliteCategory, SortOption } from '../types/satellite'
+
+const SATELLITE_HERO_IMAGE =
+  'https://images.unsplash.com/photo-1614728263952-84ea256f9679?auto=format&fit=crop&w=1400&q=80'
 
 function sortSatellites(items: SatelliteCatalogEntry[], sort: SortOption) {
   const sorted = [...items]
@@ -68,14 +72,11 @@ function SatellitesPage() {
       }}
     >
       <Box sx={{ maxWidth: 1280, mx: 'auto', px: { xs: 2, sm: 3 }, py: { xs: 3, sm: 4 } }}>
-        <Box sx={{ mb: 3 }}>
-          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
-            {t('satellitesTitle')}
-          </Typography>
-          <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 600 }}>
-            {t('satellitesSubtitle')}
-          </Typography>
-        </Box>
+        <PageHero
+          title={t('satellitesTitle')}
+          subtitle={t('satellitesSubtitle')}
+          imageUrl={SATELLITE_HERO_IMAGE}
+        />
 
         <SatelliteFilters
           search={search}

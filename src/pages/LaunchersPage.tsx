@@ -6,7 +6,11 @@ import { LAUNCHER_CATALOG } from '../data/launcherCatalog'
 import CatalogCard from '../components/Catalog/CatalogCard'
 import CatalogFilters from '../components/Catalog/CatalogFilters'
 import CatalogDetailModal from '../components/Catalog/CatalogDetailModal'
+import PageHero from '../components/common/PageHero'
 import { sortCatalog, type CatalogEntry, type CatalogSortOption } from '../types/catalog'
+
+const LAUNCHER_HERO_IMAGE =
+  'https://images.unsplash.com/photo-1517976487492-5750f3195933?auto=format&fit=crop&w=1400&q=80'
 
 const CATEGORY_OPTIONS = [
   { value: 'heavyLift', labelKey: 'catHeavyLift' },
@@ -57,10 +61,11 @@ function LaunchersPage() {
   return (
     <Box sx={{ width: '100%', height: '100%', overflow: 'auto', bgcolor: 'background.default' }}>
       <Box sx={{ maxWidth: 1280, mx: 'auto', px: { xs: 2, sm: 3 }, py: { xs: 3, sm: 4 } }}>
-        <Box sx={{ mb: 3 }}>
-          <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>{t('launchersTitle')}</Typography>
-          <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 600 }}>{t('launchersSubtitle')}</Typography>
-        </Box>
+        <PageHero
+          title={t('launchersTitle')}
+          subtitle={t('launchersSubtitle')}
+          imageUrl={LAUNCHER_HERO_IMAGE}
+        />
 
         <CatalogFilters
           search={search}
