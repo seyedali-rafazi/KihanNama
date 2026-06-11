@@ -1,23 +1,20 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Box from '@mui/material/Box'
 import { Viewer, Globe, CzmlDataSource } from 'resium'
-import {
-  BoundingSphere,
-  Cartesian3,
-  HeadingPitchRange,
-  Math as CesiumMath,
-  NearFarScalar,
-} from 'cesium'
+import { Cartesian3, NearFarScalar } from 'cesium'
 import type { CesiumComponentRef } from 'resium'
 import type { Viewer as CesiumViewer, CzmlDataSource as CesiumCzmlDataSource } from 'cesium'
 import { generateSatellitesCzml } from '../../data/generateSatellitesCzml'
 import { SATELLITES } from '../../data/satellites'
 import { applyMapType } from '../../utils/mapProviders'
 import { createSatelliteBillboardCanvas, SATELLITE_BILLBOARD_DISPLAY_SIZE } from '../../utils/satelliteBillboard'
+import { flyToSatelliteEntity } from '../../utils/satelliteTelemetry'
 import { DEFAULT_ORBIT_SETTINGS, type MapType, type OrbitSettings } from '../../types/globe'
 import GlobeControlPanel from './GlobeControlPanel'
 import GlobeMapControls from './GlobeMapControls'
 import GlobeUiLayer from './GlobeUiLayer'
+import SatelliteInfoBadge from './SatelliteInfoBadge'
+import { useSatelliteInteractions } from './useSatelliteInteractions'
 import { useLoading } from '../../context/LoadingContext'
 
 const initialVisibility = Object.fromEntries(SATELLITES.map((s) => [s.id, true]))
@@ -106,6 +103,7 @@ function GlobeViewer() {
   const [mapType, setMapType] = useState<MapType>('dark')
   const [settings, setSettings] = useState<OrbitSettings>(DEFAULT_ORBIT_SETTINGS)
   const [visibility, setVisibility] = useState<Record<string, boolean>>(initialVisibility)
+  const [satellitesReady, setSatellitesReady] = useState(false)
 
   const czmlData = useMemo(() => generateSatellitesCzml(settings), [])
 
@@ -167,6 +165,7 @@ function GlobeViewer() {
     applyOrbitRendering(dataSource, settings.pathWidth)
 
     void applySatelliteBillboards(dataSource).then(() => {
+      setSatellitesReady(true)
       markReady('satellites')
     })
   }, [settings, visibility, markReady])
@@ -175,7 +174,7 @@ function GlobeViewer() {
     setVisibility((prev) => ({ ...prev, [id]: !prev[id] }))
   }
 
-  const handleZoomToSatellite = (id: string) => {
+  const handleZoomToSatellite = useCallback((id: string) => {
     const viewer = viewerRef.current?.cesiumElement
     if (!viewer) return
 
@@ -185,26 +184,25 @@ function GlobeViewer() {
     const entity = dataSource.entities.getById(id)
     if (!entity?.position) return
 
-    const sat = SATELLITES.find((s) => s.id === id)
-    const time = viewer.clock.currentTime
-    const position = entity.position.getValue(time, new Cartesian3())
-    if (!position || Cartesian3.equals(position, Cartesian3.ZERO)) return
-
     if (!visibility[id]) {
       setVisibility((prev) => ({ ...prev, [id]: true }))
     }
 
-    const cameraRange = Math.max((sat?.altitude ?? 500_000) * 3, 2_000_000)
+    const sat = SATELLITES.find((s) => s.id === id)
+    void flyToSatelliteEntity(viewer, entity, sat?.altitude)
+  }, [visibility])
 
-    viewer.camera.flyToBoundingSphere(new BoundingSphere(position, 1), {
-      duration: 1.5,
-      offset: new HeadingPitchRange(
-        0,
-        CesiumMath.toRadians(-40),
-        cameraRange,
-      ),
-    })
-  }
+  const { activeBadgeId, pinnedSatelliteId, pinSatellite } = useSatelliteInteractions({
+    viewerRef,
+    dataSourceRef,
+    onZoomToSatellite: handleZoomToSatellite,
+    ready: satellitesReady,
+  })
+
+  const handleAccordionZoom = useCallback((id: string) => {
+    pinSatellite(id)
+    handleZoomToSatellite(id)
+  }, [handleZoomToSatellite, pinSatellite])
 
   const handleSettingsChange = (partial: Partial<OrbitSettings>) => {
     setSettings((prev) => ({ ...prev, ...partial }))
@@ -234,12 +232,19 @@ function GlobeViewer() {
       </Viewer>
 
       <GlobeUiLayer>
+        <SatelliteInfoBadge
+          viewerRef={viewerRef}
+          dataSourceRef={dataSourceRef}
+          satelliteId={activeBadgeId}
+          pinned={Boolean(pinnedSatelliteId && activeBadgeId === pinnedSatelliteId)}
+        />
+
         <GlobeControlPanel
           visibility={visibility}
           mapType={mapType}
           settings={settings}
           onToggleVisibility={handleToggleVisibility}
-          onZoomToSatellite={handleZoomToSatellite}
+          onZoomToSatellite={handleAccordionZoom}
           onMapTypeChange={setMapType}
           onSettingsChange={handleSettingsChange}
         />
