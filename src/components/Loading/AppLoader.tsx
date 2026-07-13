@@ -131,7 +131,6 @@ function AppLoader() {
               width: 88,
               height: 88,
               borderRadius: 3,
-              mx: 'auto',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -141,16 +140,14 @@ function AppLoader() {
               transition: 'all 0.35s ease',
             }}
           >
-            <Icon sx={{ fontSize: 40, color: '#42a5f5' }} />
+            <Box
+              component="img"
+              src="/favicon.svg"
+              alt=""
+              sx={{ width: 44, height: 44, display: 'block' }}
+            />
           </Box>
         </Box>
-
-        <Box
-          component="img"
-          src="/favicon.svg"
-          alt=""
-          sx={{ width: 28, height: 28, mb: 1.5, display: 'block' }}
-        />
 
         <Typography variant="h5" sx={{ fontWeight: 800, letterSpacing: '0.03em', mb: 2 }}>
           {t('brand')}
@@ -167,25 +164,35 @@ function AppLoader() {
             mb: 3,
           }}
         >
-          <Typography
-            key={`title-${shownIndex}`}
-            variant="h6"
+          <Box
             sx={{
-              fontWeight: 700,
-              fontSize: '1.05rem',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 1,
               mb: 0.75,
               opacity: messageVisible ? 1 : 0,
               transform: messageVisible ? 'translateY(0)' : 'translateY(8px)',
               transition: 'opacity 0.32s ease, transform 0.32s ease',
-              background: 'linear-gradient(90deg, #fff, #90caf9, #fff)',
-              backgroundSize: '200% auto',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              animation: messageVisible ? `${shimmer} 3s linear infinite` : 'none',
             }}
           >
-            {t(step.labelKey)}
-          </Typography>
+            <Icon sx={{ fontSize: 22, color: '#42a5f5' }} />
+            <Typography
+              key={`title-${shownIndex}`}
+              variant="h6"
+              sx={{
+                fontWeight: 700,
+                fontSize: '1.05rem',
+                background: 'linear-gradient(90deg, #fff, #90caf9, #fff)',
+                backgroundSize: '200% auto',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                animation: messageVisible ? `${shimmer} 3s linear infinite` : 'none',
+              }}
+            >
+              {t(step.labelKey)}
+            </Typography>
+          </Box>
 
           <Typography
             key={`desc-${shownIndex}`}
