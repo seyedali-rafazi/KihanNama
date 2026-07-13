@@ -1,5 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" style="color-scheme: only light">
-  <rect width="64" height="64" rx="14" fill="#0f1113"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" color-scheme="only light">
+  <style>
+    :root { color-scheme: only light; forced-color-adjust: none; }
+  </style>
+  <rect width="64" height="64" rx="14" fill="#000000"/>
   <circle cx="32" cy="34" r="18" fill="#1976d2" opacity="0.15"/>
   <circle cx="32" cy="34" r="16" stroke="#1976d2" stroke-width="2" fill="url(#globeGrad)"/>
   <ellipse cx="32" cy="34" rx="16" ry="6" stroke="rgba(66,165,245,0.45)" stroke-width="1"/>
