@@ -146,6 +146,8 @@ function SiteLogo({ brand, onClick }: { brand: string; onClick?: () => void }) {
           height: 36,
           transition: 'transform 0.2s ease',
           flexShrink: 0,
+          colorScheme: 'only light',
+          forcedColorAdjust: 'none',
         }}
       />
       <Box sx={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>

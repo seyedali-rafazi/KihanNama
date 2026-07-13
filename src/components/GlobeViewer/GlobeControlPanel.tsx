@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import Accordion from '@mui/material/Accordion'
 import AccordionSummary from '@mui/material/AccordionSummary'
 import AccordionDetails from '@mui/material/AccordionDetails'
@@ -180,6 +180,8 @@ function MapStyleCard({
   simple?: boolean
 }) {
   const theme = useTheme()
+  const [imgError, setImgError] = useState(false)
+  const handleImgError = useCallback(() => setImgError(true), [])
 
   return (
     <Box
@@ -207,18 +209,43 @@ function MapStyleCard({
             },
       }}
     >
-      <Box
-        component="img"
-        src={preview}
-        alt={label}
-        sx={{
-          width: '100%',
-          height: 72,
-          flexShrink: 0,
-          objectFit: 'cover',
-          display: 'block',
-        }}
-      />
+      {imgError ? (
+        <Box
+          sx={{
+            width: '100%',
+            height: 72,
+            flexShrink: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.12)} 0%, ${alpha(theme.palette.common.black, 0.3)} 100%)`,
+            borderBottom: `1px solid ${alpha(theme.palette.divider, 0.5)}`,
+          }}
+        >
+          <MapIcon
+            sx={{
+              fontSize: 28,
+              color: selected
+                ? alpha(theme.palette.primary.main, 0.75)
+                : alpha(theme.palette.text.secondary, 0.5),
+            }}
+          />
+        </Box>
+      ) : (
+        <Box
+          component="img"
+          src={preview}
+          alt={label}
+          onError={handleImgError}
+          sx={{
+            width: '100%',
+            height: 72,
+            flexShrink: 0,
+            objectFit: 'cover',
+            display: 'block',
+          }}
+        />
+      )}
       <Typography
         variant="caption"
         align="center"
