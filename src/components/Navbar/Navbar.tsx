@@ -139,15 +139,17 @@ function SiteLogo({ brand, onClick }: { brand: string; onClick?: () => void }) {
       <Box
         className="logo-mark"
         component="img"
-        src="/favicon-32.png"
+        src="/favicon-32.png?v=3"
         alt=""
         sx={{
           width: 36,
           height: 36,
           transition: 'transform 0.2s ease',
           flexShrink: 0,
-          colorScheme: 'only light',
-          forcedColorAdjust: 'none',
+          display: 'block',
+          borderRadius: '8px',
+          boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.12), 0 2px 8px rgba(0,0,0,0.35)',
+          border: '1px solid rgba(142,180,220,0.25)',
         }}
       />
       <Box sx={{ display: 'flex', flexDirection: 'column', lineHeight: 1.1 }}>

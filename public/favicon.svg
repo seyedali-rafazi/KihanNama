@@ -1,17 +1,33 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="14" fill="#000000"/>
-  <circle cx="32" cy="34" r="18" fill="#1976d2" opacity="0.15"/>
-  <circle cx="32" cy="34" r="16" stroke="#1976d2" stroke-width="2" fill="url(#globeGrad)"/>
-  <ellipse cx="32" cy="34" rx="16" ry="6" stroke="#42a5f5" stroke-opacity="0.45" stroke-width="1" fill="none"/>
-  <ellipse cx="32" cy="34" rx="6" ry="16" stroke="#42a5f5" stroke-opacity="0.35" stroke-width="1" fill="none"/>
-  <circle cx="32" cy="34" r="2.5" fill="#42a5f5"/>
-  <circle cx="48" cy="20" r="3" fill="#42a5f5"/>
-  <path d="M48 20 L44 24" stroke="#42a5f5" stroke-width="1.2" stroke-linecap="round" fill="none"/>
-  <ellipse cx="32" cy="34" rx="22" ry="8" stroke="#1976d2" stroke-width="1.5" stroke-dasharray="4 3" fill="none" transform="rotate(-20 32 34)"/>
   <defs>
+    <linearGradient id="glassBg" x1="8" y1="4" x2="56" y2="60" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#243447"/>
+      <stop offset="45%" stop-color="#151d29"/>
+      <stop offset="100%" stop-color="#0b1018"/>
+    </linearGradient>
+    <linearGradient id="glassShine" x1="32" y1="6" x2="32" y2="34" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
     <radialGradient id="globeGrad" cx="0.35" cy="0.35" r="0.75">
       <stop offset="0%" stop-color="#1e3a5f"/>
       <stop offset="100%" stop-color="#0d2137"/>
     </radialGradient>
   </defs>
+
+  <!-- Opaque base: no transparent corners (Samsung Internet) -->
+  <rect width="64" height="64" fill="#0f1113"/>
+  <rect width="64" height="64" rx="14" fill="url(#glassBg)"/>
+  <rect width="64" height="64" rx="14" fill="url(#glassShine)"/>
+  <rect x="1.5" y="1.5" width="61" height="61" rx="12.5" fill="none" stroke="#8eb4dc" stroke-opacity="0.28" stroke-width="1"/>
+  <rect x="1.5" y="1.5" width="61" height="61" rx="12.5" fill="none" stroke="#ffffff" stroke-opacity="0.1" stroke-width="0.5"/>
+
+  <circle cx="32" cy="34" r="18" fill="#1976d2" opacity="0.18"/>
+  <circle cx="32" cy="34" r="16" stroke="#42a5f5" stroke-width="2" fill="url(#globeGrad)"/>
+  <ellipse cx="32" cy="34" rx="16" ry="6" stroke="#90caf9" stroke-opacity="0.55" stroke-width="1" fill="none"/>
+  <ellipse cx="32" cy="34" rx="6" ry="16" stroke="#90caf9" stroke-opacity="0.4" stroke-width="1" fill="none"/>
+  <circle cx="32" cy="34" r="2.5" fill="#64b5f6"/>
+  <circle cx="48" cy="20" r="3" fill="#64b5f6"/>
+  <path d="M48 20 L44 24" stroke="#64b5f6" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+  <ellipse cx="32" cy="34" rx="22" ry="8" stroke="#42a5f5" stroke-width="1.5" stroke-dasharray="4 3" fill="none" transform="rotate(-20 32 34)"/>
 </svg>

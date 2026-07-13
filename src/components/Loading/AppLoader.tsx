@@ -147,9 +147,17 @@ function AppLoader() {
 
         <Box
           component="img"
-          src="/favicon-32.png"
+          src="/favicon-32.png?v=3"
           alt=""
-          sx={{ width: 28, height: 28, mb: 1.5, opacity: 0.9 }}
+          sx={{
+            width: 28,
+            height: 28,
+            mb: 1.5,
+            display: 'block',
+            borderRadius: '6px',
+            boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.12), 0 2px 8px rgba(0,0,0,0.35)',
+            border: '1px solid rgba(142,180,220,0.25)',
+          }}
         />
 
         <Typography variant="h5" sx={{ fontWeight: 800, letterSpacing: '0.03em', mb: 2 }}>
