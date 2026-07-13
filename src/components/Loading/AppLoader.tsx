@@ -147,7 +147,7 @@ function AppLoader() {
 
         <Box
           component="img"
-          src="/favicon.svg"
+          src="/favicon-32.png"
           alt=""
           sx={{ width: 28, height: 28, mb: 1.5, opacity: 0.9 }}
         />

@@ -139,7 +139,7 @@ function SiteLogo({ brand, onClick }: { brand: string; onClick?: () => void }) {
       <Box
         className="logo-mark"
         component="img"
-        src="/favicon.svg"
+        src="/favicon-32.png"
         alt=""
         sx={{
           width: 36,
