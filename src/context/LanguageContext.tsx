@@ -1,7 +1,9 @@
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
   type ReactNode,
 } from 'react'
@@ -9,11 +11,13 @@ import { translations, type Language, type TranslationKey } from '../i18n/transl
 
 const LANGUAGE_STORAGE_KEY = 'kihannama-language'
 
+export type Direction = 'ltr' | 'rtl'
+
 type LanguageContextValue = {
   language: Language
   setLanguage: (language: Language) => void
   t: (key: TranslationKey) => string
-  dir: 'ltr' | 'rtl'
+  dir: Direction
 }
 
 const LanguageContext = createContext<LanguageContextValue | null>(null)
@@ -23,36 +27,45 @@ function readStoredLanguage(): Language {
     const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY)
     if (stored === 'en' || stored === 'fa') return stored
   } catch {
-    // ignore storage errors
+    // Ignore localStorage access errors (e.g. incognito restrictions)
   }
   return 'fa'
 }
 
 export function LanguageProvider({ children }: { children: ReactNode }) {
   const [language, setLanguageState] = useState<Language>(readStoredLanguage)
-  const dir = language === 'fa' ? 'rtl' : 'ltr'
+  const dir: Direction = language === 'fa' ? 'rtl' : 'ltr'
 
-  const setLanguage = (next: Language) => {
+  const setLanguage = useCallback((next: Language) => {
     setLanguageState(next)
     try {
       localStorage.setItem(LANGUAGE_STORAGE_KEY, next)
     } catch {
-      // ignore storage errors
+      // Ignore localStorage access errors
     }
-  }
+  }, [])
 
   useEffect(() => {
     document.documentElement.lang = language
     document.documentElement.dir = dir
   }, [language, dir])
 
-  const t = (key: TranslationKey) => translations[language][key]
-
-  return (
-    <LanguageContext.Provider value={{ language, setLanguage, t, dir }}>
-      {children}
-    </LanguageContext.Provider>
+  const t = useCallback(
+    (key: TranslationKey) => translations[language][key] ?? key,
+    [language],
   )
+
+  const value: LanguageContextValue = useMemo(
+    () => ({
+      language,
+      setLanguage,
+      t,
+      dir,
+    }),
+    [language, setLanguage, t, dir],
+  )
+
+  return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>
 }
 
 export function useLanguage() {

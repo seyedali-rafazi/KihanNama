@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useCallback } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { useLanguage } from '../context/LanguageContext'
@@ -7,19 +7,19 @@ import CatalogCard from '../components/Catalog/CatalogCard'
 import CatalogFilters from '../components/Catalog/CatalogFilters'
 import CatalogDetailModal from '../components/Catalog/CatalogDetailModal'
 import PageHero from '../components/common/PageHero'
-import { sortCatalog, type CatalogEntry, type CatalogSortOption } from '../types/catalog'
+import { useCatalogFilter } from '../hooks/useCatalogFilter'
+import { sortCatalog, type CatalogEntry, type CatalogSortOption, type FilterOption } from '../types/catalog'
 
-const STATION_HERO_IMAGE =
-  '/space-station.webp'
+const STATION_HERO_IMAGE = '/space-station.webp'
 
-const CATEGORY_OPTIONS = [
+const CATEGORY_OPTIONS: FilterOption[] = [
   { value: 'tracking', labelKey: 'catTracking' },
   { value: 'communications', labelKey: 'catCommunicationsStation' },
   { value: 'launch', labelKey: 'catLaunchSite' },
   { value: 'research', labelKey: 'catResearch' },
 ]
 
-const REGION_OPTIONS = [
+const REGION_OPTIONS: FilterOption[] = [
   { value: 'americas', labelKey: 'regionAmericas' },
   { value: 'europe', labelKey: 'regionEurope' },
   { value: 'asia', labelKey: 'regionAsia' },
@@ -37,27 +37,40 @@ const SORT_OPTIONS: { value: CatalogSortOption; labelKey: 'sortNameAsc' | 'sortN
 
 function SatelliteStationPage() {
   const { t } = useLanguage()
-  const [search, setSearch] = useState('')
-  const [category, setCategory] = useState('all')
-  const [region, setRegion] = useState('all')
-  const [sort, setSort] = useState<CatalogSortOption>('nameAsc')
-  const [selected, setSelected] = useState<CatalogEntry | null>(null)
 
-  const filtered = useMemo(() => {
-    const query = search.trim().toLowerCase()
-    let result = STATION_CATALOG
-
-    if (query) {
-      result = result.filter((item) => {
+  const filterPredicate = useCallback(
+    (item: CatalogEntry, query: string, category: string, region: string) => {
+      if (query) {
         const text = `${item.name} ${item.descriptionEn} ${item.descriptionFa} ${item.operatorEn}`.toLowerCase()
-        return text.includes(query)
-      })
-    }
-    if (category !== 'all') result = result.filter((item) => item.category === category)
-    if (region !== 'all') result = result.filter((item) => item.secondary === region)
+        if (!text.includes(query)) return false
+      }
+      if (category !== 'all' && item.category !== category) return false
+      if (region !== 'all' && item.secondary !== region) return false
+      return true
+    },
+    [],
+  )
 
-    return sortCatalog(result, sort)
-  }, [search, category, region, sort])
+  const {
+    search,
+    setSearch,
+    category,
+    setCategory,
+    secondaryFilter: region,
+    setSecondaryFilter: setRegion,
+    sort,
+    setSort,
+    selected,
+    setSelected,
+    clearSelected,
+    filteredItems,
+    count,
+  } = useCatalogFilter<CatalogEntry, CatalogSortOption>({
+    items: STATION_CATALOG,
+    initialSort: 'nameAsc',
+    filterPredicate,
+    sortComparator: sortCatalog,
+  })
 
   return (
     <Box sx={{ width: '100%', height: '100%', overflow: 'auto', bgcolor: 'background.default' }}>
@@ -85,16 +98,16 @@ function SatelliteStationPage() {
         />
 
         <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
-          {filtered.length} {t('stationsFound')}
+          {count} {t('stationsFound')}
         </Typography>
 
         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)', lg: 'repeat(4, 1fr)' }, gap: 2.5 }}>
-          {filtered.map((item) => (
+          {filteredItems.map((item) => (
             <CatalogCard key={item.id} item={item} placeholderType="station" onClick={() => setSelected(item)} />
           ))}
         </Box>
 
-        {filtered.length === 0 && (
+        {count === 0 && (
           <Box sx={{ textAlign: 'center', py: 8 }}>
             <Typography color="text.secondary">{t('noStationsFound')}</Typography>
           </Box>
@@ -104,7 +117,7 @@ function SatelliteStationPage() {
       <CatalogDetailModal
         item={selected}
         open={Boolean(selected)}
-        onClose={() => setSelected(null)}
+        onClose={clearSelected}
         placeholderType="station"
         infographicTitleKey="stationInfographic"
         stepsLabelKey="opsSteps"

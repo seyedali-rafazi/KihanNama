@@ -5,7 +5,7 @@ import RocketLaunchIcon from '@mui/icons-material/RocketLaunch'
 import SettingsInputAntennaIcon from '@mui/icons-material/SettingsInputAntenna'
 import { alpha, useTheme } from '@mui/material/styles'
 import type { SxProps, Theme } from '@mui/material/styles'
-import type { CatalogImageType } from '../../constants/defaultImages'
+import type { CatalogImageType } from '../../types/common'
 
 type ImagePlaceholderProps = {
   type: CatalogImageType

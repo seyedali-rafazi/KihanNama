@@ -1,9 +1,6 @@
-export type InfographicSection = {
-  titleEn: string
-  titleFa: string
-  descriptionEn: string
-  descriptionFa: string
-}
+import type { InfographicSection } from './common'
+
+export type { InfographicSection }
 
 export type CatalogEntry = {
   id: string

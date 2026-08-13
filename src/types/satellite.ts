@@ -1,6 +1,8 @@
 import type { SatelliteInfo } from './globe'
+import type { InfographicSection } from './common'
 
 export type OrbitClass = 'leo' | 'meo' | 'geo'
+
 export type SatelliteCategory =
   | 'earthObservation'
   | 'navigation'
@@ -9,12 +11,7 @@ export type SatelliteCategory =
   | 'science'
   | 'station'
 
-export type InfographicSection = {
-  titleEn: string
-  titleFa: string
-  descriptionEn: string
-  descriptionFa: string
-}
+export type { InfographicSection }
 
 export type SatelliteCatalogEntry = SatelliteInfo & {
   category: SatelliteCategory
@@ -31,4 +28,10 @@ export type SatelliteCatalogEntry = SatelliteInfo & {
   infographicRight: InfographicSection[]
 }
 
-export type SortOption = 'nameAsc' | 'nameDesc' | 'altitudeAsc' | 'altitudeDesc' | 'periodAsc' | 'periodDesc'
+export type SortOption =
+  | 'nameAsc'
+  | 'nameDesc'
+  | 'altitudeAsc'
+  | 'altitudeDesc'
+  | 'periodAsc'
+  | 'periodDesc'

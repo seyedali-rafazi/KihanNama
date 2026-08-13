@@ -1,6 +1,8 @@
+import { Suspense } from 'react'
 import { Outlet } from 'react-router-dom'
 import Box from '@mui/material/Box'
 import Navbar from '../Navbar/Navbar'
+import PageFallback from '../Loading/PageFallback'
 import { NAVBAR_HEIGHT } from '../../theme/theme'
 
 function Layout() {
@@ -16,7 +18,9 @@ function Layout() {
           overflow: 'hidden',
         }}
       >
-        <Outlet />
+        <Suspense fallback={<PageFallback />}>
+          <Outlet />
+        </Suspense>
       </Box>
     </Box>
   )

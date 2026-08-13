@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useCallback } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { useLanguage } from '../context/LanguageContext'
@@ -7,12 +7,12 @@ import SatelliteCard from '../components/Satellites/SatelliteCard'
 import SatelliteFilters from '../components/Satellites/SatelliteFilters'
 import SatelliteDetailModal from '../components/Satellites/SatelliteDetailModal'
 import PageHero from '../components/common/PageHero'
+import { useCatalogFilter } from '../hooks/useCatalogFilter'
 import type { OrbitClass, SatelliteCatalogEntry, SatelliteCategory, SortOption } from '../types/satellite'
 
-const SATELLITE_HERO_IMAGE =
-  '/satellite-page.webp'
+const SATELLITE_HERO_IMAGE = '/satellite-page.webp'
 
-function sortSatellites(items: SatelliteCatalogEntry[], sort: SortOption) {
+function sortSatellites(items: SatelliteCatalogEntry[], sort: SortOption): SatelliteCatalogEntry[] {
   const sorted = [...items]
   switch (sort) {
     case 'nameAsc':
@@ -34,33 +34,42 @@ function sortSatellites(items: SatelliteCatalogEntry[], sort: SortOption) {
 
 function SatellitesPage() {
   const { t } = useLanguage()
-  const [search, setSearch] = useState('')
-  const [category, setCategory] = useState<SatelliteCategory | 'all'>('all')
-  const [orbitClass, setOrbitClass] = useState<OrbitClass | 'all'>('all')
-  const [sort, setSort] = useState<SortOption>('nameAsc')
-  const [selected, setSelected] = useState<SatelliteCatalogEntry | null>(null)
 
-  const filtered = useMemo(() => {
-    const query = search.trim().toLowerCase()
-    let result = SATELLITE_CATALOG
-
-    if (query) {
-      result = result.filter((sat) => {
+  const filterPredicate = useCallback(
+    (sat: SatelliteCatalogEntry, query: string, category: string, orbitClass: string) => {
+      if (query) {
         const desc = `${sat.descriptionEn} ${sat.descriptionFa}`.toLowerCase()
-        return sat.name.toLowerCase().includes(query) || desc.includes(query)
-      })
-    }
+        if (!sat.name.toLowerCase().includes(query) && !desc.includes(query)) {
+          return false
+        }
+      }
+      if (category !== 'all' && sat.category !== category) return false
+      if (orbitClass !== 'all' && sat.orbitClass !== orbitClass) return false
+      return true
+    },
+    [],
+  )
 
-    if (category !== 'all') {
-      result = result.filter((sat) => sat.category === category)
-    }
-
-    if (orbitClass !== 'all') {
-      result = result.filter((sat) => sat.orbitClass === orbitClass)
-    }
-
-    return sortSatellites(result, sort)
-  }, [search, category, orbitClass, sort])
+  const {
+    search,
+    setSearch,
+    category,
+    setCategory,
+    secondaryFilter: orbitClass,
+    setSecondaryFilter: setOrbitClass,
+    sort,
+    setSort,
+    selected,
+    setSelected,
+    clearSelected,
+    filteredItems,
+    count,
+  } = useCatalogFilter<SatelliteCatalogEntry, SortOption>({
+    items: SATELLITE_CATALOG,
+    initialSort: 'nameAsc',
+    filterPredicate,
+    sortComparator: sortSatellites,
+  })
 
   return (
     <Box
@@ -80,8 +89,8 @@ function SatellitesPage() {
 
         <SatelliteFilters
           search={search}
-          category={category}
-          orbitClass={orbitClass}
+          category={category as SatelliteCategory | 'all'}
+          orbitClass={orbitClass as OrbitClass | 'all'}
           sort={sort}
           onSearchChange={setSearch}
           onCategoryChange={setCategory}
@@ -90,7 +99,7 @@ function SatellitesPage() {
         />
 
         <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
-          {filtered.length} {t('resultsCount')}
+          {count} {t('resultsCount')}
         </Typography>
 
         <Box
@@ -105,7 +114,7 @@ function SatellitesPage() {
             gap: 2.5,
           }}
         >
-          {filtered.map((satellite) => (
+          {filteredItems.map((satellite) => (
             <SatelliteCard
               key={satellite.id}
               satellite={satellite}
@@ -114,7 +123,7 @@ function SatellitesPage() {
           ))}
         </Box>
 
-        {filtered.length === 0 && (
+        {count === 0 && (
           <Box sx={{ textAlign: 'center', py: 8 }}>
             <Typography color="text.secondary">{t('noSatellitesFound')}</Typography>
           </Box>
@@ -124,7 +133,7 @@ function SatellitesPage() {
       <SatelliteDetailModal
         satellite={selected}
         open={Boolean(selected)}
-        onClose={() => setSelected(null)}
+        onClose={clearSelected}
       />
     </Box>
   )

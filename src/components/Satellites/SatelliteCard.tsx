@@ -66,9 +66,11 @@ function SatelliteCard({ satellite, onClick }: SatelliteCardProps) {
             }}
           />
           <Chip
-            label={language === 'fa'
-              ? { leo: 'LEO', meo: 'MEO', geo: 'GEO' }[satellite.orbitClass]
-              : satellite.orbitClass.toUpperCase()}
+            label={
+              language === 'fa'
+                ? { leo: 'LEO', meo: 'MEO', geo: 'GEO' }[satellite.orbitClass]
+                : satellite.orbitClass.toUpperCase()
+            }
             size="small"
             sx={{
               position: 'absolute',

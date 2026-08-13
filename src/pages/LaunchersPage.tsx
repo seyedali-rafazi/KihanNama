@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useCallback } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { useLanguage } from '../context/LanguageContext'
@@ -7,19 +7,19 @@ import CatalogCard from '../components/Catalog/CatalogCard'
 import CatalogFilters from '../components/Catalog/CatalogFilters'
 import CatalogDetailModal from '../components/Catalog/CatalogDetailModal'
 import PageHero from '../components/common/PageHero'
-import { sortCatalog, type CatalogEntry, type CatalogSortOption } from '../types/catalog'
+import { useCatalogFilter } from '../hooks/useCatalogFilter'
+import { sortCatalog, type CatalogEntry, type CatalogSortOption, type FilterOption } from '../types/catalog'
 
-const LAUNCHER_HERO_IMAGE =
-  '/launchers-page.webp'
+const LAUNCHER_HERO_IMAGE = '/launchers-page.webp'
 
-const CATEGORY_OPTIONS = [
+const CATEGORY_OPTIONS: FilterOption[] = [
   { value: 'heavyLift', labelKey: 'catHeavyLift' },
   { value: 'mediumLift', labelKey: 'catMediumLift' },
   { value: 'smallLift', labelKey: 'catSmallLift' },
   { value: 'reusable', labelKey: 'catReusable' },
 ]
 
-const STATUS_OPTIONS = [
+const STATUS_OPTIONS: FilterOption[] = [
   { value: 'active', labelKey: 'statusActive' },
   { value: 'legacy', labelKey: 'statusLegacy' },
   { value: 'developmental', labelKey: 'statusDevelopmental' },
@@ -36,27 +36,40 @@ const SORT_OPTIONS: { value: CatalogSortOption; labelKey: 'sortNameAsc' | 'sortN
 
 function LaunchersPage() {
   const { t } = useLanguage()
-  const [search, setSearch] = useState('')
-  const [category, setCategory] = useState('all')
-  const [status, setStatus] = useState('all')
-  const [sort, setSort] = useState<CatalogSortOption>('nameAsc')
-  const [selected, setSelected] = useState<CatalogEntry | null>(null)
 
-  const filtered = useMemo(() => {
-    const query = search.trim().toLowerCase()
-    let result = LAUNCHER_CATALOG
-
-    if (query) {
-      result = result.filter((item) => {
+  const filterPredicate = useCallback(
+    (item: CatalogEntry, query: string, category: string, status: string) => {
+      if (query) {
         const text = `${item.name} ${item.descriptionEn} ${item.descriptionFa} ${item.operatorEn}`.toLowerCase()
-        return text.includes(query)
-      })
-    }
-    if (category !== 'all') result = result.filter((item) => item.category === category)
-    if (status !== 'all') result = result.filter((item) => item.secondary === status)
+        if (!text.includes(query)) return false
+      }
+      if (category !== 'all' && item.category !== category) return false
+      if (status !== 'all' && item.secondary !== status) return false
+      return true
+    },
+    [],
+  )
 
-    return sortCatalog(result, sort)
-  }, [search, category, status, sort])
+  const {
+    search,
+    setSearch,
+    category,
+    setCategory,
+    secondaryFilter: status,
+    setSecondaryFilter: setStatus,
+    sort,
+    setSort,
+    selected,
+    setSelected,
+    clearSelected,
+    filteredItems,
+    count,
+  } = useCatalogFilter<CatalogEntry, CatalogSortOption>({
+    items: LAUNCHER_CATALOG,
+    initialSort: 'nameAsc',
+    filterPredicate,
+    sortComparator: sortCatalog,
+  })
 
   return (
     <Box sx={{ width: '100%', height: '100%', overflow: 'auto', bgcolor: 'background.default' }}>
@@ -84,16 +97,16 @@ function LaunchersPage() {
         />
 
         <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
-          {filtered.length} {t('launchersFound')}
+          {count} {t('launchersFound')}
         </Typography>
 
         <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)', lg: 'repeat(4, 1fr)' }, gap: 2.5 }}>
-          {filtered.map((item) => (
+          {filteredItems.map((item) => (
             <CatalogCard key={item.id} item={item} placeholderType="launcher" onClick={() => setSelected(item)} />
           ))}
         </Box>
 
-        {filtered.length === 0 && (
+        {count === 0 && (
           <Box sx={{ textAlign: 'center', py: 8 }}>
             <Typography color="text.secondary">{t('noLaunchersFound')}</Typography>
           </Box>
@@ -103,7 +116,7 @@ function LaunchersPage() {
       <CatalogDetailModal
         item={selected}
         open={Boolean(selected)}
-        onClose={() => setSelected(null)}
+        onClose={clearSelected}
         placeholderType="launcher"
         infographicTitleKey="launcherInfographic"
         stepsLabelKey="launchSteps"

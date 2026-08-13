@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
 import type { SxProps, Theme } from '@mui/material/styles'
-import type { CatalogImageType } from '../../constants/defaultImages'
+import type { CatalogImageType } from '../../types/common'
 import ImagePlaceholder from './ImagePlaceholder'
 
 type FallbackImageProps = {

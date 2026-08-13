@@ -7,11 +7,12 @@ import Typography from '@mui/material/Typography'
 import { alpha, useTheme } from '@mui/material/styles'
 import { useLanguage } from '../../context/LanguageContext'
 import type { CatalogEntry } from '../../types/catalog'
+import type { CatalogImageType } from '../../types/common'
 import FallbackImage from '../common/FallbackImage'
 
 type CatalogCardProps = {
   item: CatalogEntry
-  placeholderType: 'launcher' | 'station'
+  placeholderType: CatalogImageType
   onClick: () => void
 }
 

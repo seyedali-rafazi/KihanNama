@@ -127,12 +127,14 @@ export function LoadingProvider({ children }: { children: ReactNode }) {
     const wait = Math.max(0, MIN_STEP_MS - elapsed)
 
     advancingRef.current = true
-    const timer = window.setTimeout(() => {
+    let pauseTimer: number | undefined
+
+    const stepTimer = window.setTimeout(() => {
       advancingRef.current = false
       stepEnteredAtRef.current = Date.now()
 
       if (displayIndex >= steps.length - 1) {
-        window.setTimeout(() => setIsComplete(true), FINAL_PAUSE_MS)
+        pauseTimer = window.setTimeout(() => setIsComplete(true), FINAL_PAUSE_MS)
         return
       }
 
@@ -140,7 +142,8 @@ export function LoadingProvider({ children }: { children: ReactNode }) {
     }, wait)
 
     return () => {
-      window.clearTimeout(timer)
+      window.clearTimeout(stepTimer)
+      if (pauseTimer !== undefined) window.clearTimeout(pauseTimer)
       advancingRef.current = false
     }
   }, [displayIndex, ready, steps, isComplete])
