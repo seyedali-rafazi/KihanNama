@@ -59,7 +59,7 @@ async function applySatelliteBillboards(dataSource: CesiumCzmlDataSource) {
         2.8e7,
         0.5,
       ) as unknown as typeof entity.billboard.scaleByDistance
-      entity.billboard.disableDepthTestDistance = Number.POSITIVE_INFINITY as unknown as typeof entity.billboard.disableDepthTestDistance
+      entity.billboard.disableDepthTestDistance = 0 as unknown as typeof entity.billboard.disableDepthTestDistance
 
       if (entity.label) {
         entity.label.scale = 0.9 as unknown as typeof entity.label.scale
@@ -69,7 +69,7 @@ async function applySatelliteBillboards(dataSource: CesiumCzmlDataSource) {
           2.8e7,
           0.55,
         ) as unknown as typeof entity.label.scaleByDistance
-        entity.label.disableDepthTestDistance = Number.POSITIVE_INFINITY as unknown as typeof entity.label.disableDepthTestDistance
+        entity.label.disableDepthTestDistance = 0 as unknown as typeof entity.label.disableDepthTestDistance
       }
     }),
   )
@@ -92,8 +92,12 @@ function applyEntitySettings(
 
     if (satEntity) {
       satEntity.show = visible
+      if (satEntity.billboard) {
+        satEntity.billboard.disableDepthTestDistance = 0 as unknown as typeof satEntity.billboard.disableDepthTestDistance
+      }
       if (satEntity.label) {
         satEntity.label.show = settings.showLabels as unknown as typeof satEntity.label.show
+        satEntity.label.disableDepthTestDistance = 0 as unknown as typeof satEntity.label.disableDepthTestDistance
       }
     }
   }
@@ -118,6 +122,7 @@ function GlobeViewer() {
 
     viewer.resolutionScale = Math.min(window.devicePixelRatio || 1, 2)
     viewer.scene.globe.maximumScreenSpaceError = 1.5
+    viewer.scene.globe.depthTestAgainstTerrain = true
     if (viewer.scene.postProcessStages.fxaa) {
       viewer.scene.postProcessStages.fxaa.enabled = true
     }
@@ -249,7 +254,7 @@ function GlobeViewer() {
         vrButton={false}
         scene3DOnly
       >
-        <Globe enableLighting />
+        <Globe enableLighting depthTestAgainstTerrain />
         <CzmlDataSource data={czmlData} onLoad={handleCzmlLoad} />
       </Viewer>
 

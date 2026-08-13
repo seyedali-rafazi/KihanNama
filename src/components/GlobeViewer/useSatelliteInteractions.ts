@@ -1,18 +1,34 @@
 import { useCallback, useEffect, useState } from 'react'
 import {
   Cartesian2,
+  Cartesian3,
   ScreenSpaceEventHandler,
   ScreenSpaceEventType,
 } from 'cesium'
 import type { Viewer as CesiumViewer, CzmlDataSource as CesiumCzmlDataSource } from 'cesium'
 import type { CesiumComponentRef } from 'resium'
-import { isSatelliteEntityId } from '../../utils/satelliteTelemetry'
+import { isPositionVisibleOnGlobe, isSatelliteEntityId } from '../../utils/satelliteTelemetry'
 
 type UseSatelliteInteractionsOptions = {
   viewerRef: React.RefObject<CesiumComponentRef<CesiumViewer> | null>
   dataSourceRef: React.RefObject<CesiumCzmlDataSource | null>
   onZoomToSatellite: (id: string) => void
   ready: boolean
+}
+
+function isEntityVisible(viewer: CesiumViewer, entity: unknown): boolean {
+  if (!entity || typeof entity !== 'object' || !('id' in entity)) return false
+  const id = (entity as { id: unknown }).id
+  if (typeof id !== 'string' || !isSatelliteEntityId(id)) return false
+
+  const posProperty = (entity as { position?: { getValue: (time: unknown, result?: Cartesian3) => Cartesian3 | undefined } }).position
+  if (posProperty && typeof posProperty.getValue === 'function') {
+    const pos = posProperty.getValue(viewer.clock.currentTime, new Cartesian3())
+    if (pos && !isPositionVisibleOnGlobe(viewer.scene, pos)) {
+      return false
+    }
+  }
+  return true
 }
 
 export function useSatelliteInteractions({
@@ -47,8 +63,8 @@ export function useSatelliteInteractions({
       const picked = viewer.scene.pick(movement.endPosition)
       const entity = picked?.id
 
-      if (entity && typeof entity === 'object' && 'id' in entity && isSatelliteEntityId(entity.id as string)) {
-        setHoveredSatelliteId(entity.id as string)
+      if (isEntityVisible(viewer, entity)) {
+        setHoveredSatelliteId((entity as { id: string }).id)
         return
       }
 
@@ -59,8 +75,8 @@ export function useSatelliteInteractions({
       const picked = viewer.scene.pick(click.position)
       const entity = picked?.id
 
-      if (entity && typeof entity === 'object' && 'id' in entity && isSatelliteEntityId(entity.id as string)) {
-        const id = entity.id as string
+      if (isEntityVisible(viewer, entity)) {
+        const id = (entity as { id: string }).id
         setPinnedSatelliteId(id)
         onZoomToSatellite(id)
         return
@@ -73,7 +89,7 @@ export function useSatelliteInteractions({
       const picked = viewer.scene.pick(click.position)
       const entity = picked?.id
 
-      if (!entity || typeof entity !== 'object' || !('id' in entity) || !isSatelliteEntityId(entity.id as string)) {
+      if (!isEntityVisible(viewer, entity)) {
         clearPinnedSatellite()
       }
     }, ScreenSpaceEventType.LEFT_CLICK)

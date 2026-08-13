@@ -76,7 +76,7 @@ function createSatelliteEntities(sat: SatelliteInfo, settings: OrbitSettings) {
         },
         width: settings.pathWidth,
         arcType: 'NONE',
-        disableDepthTestDistance: Number.POSITIVE_INFINITY,
+        disableDepthTestDistance: 0,
         material: {
           solidColor: {
             color: { rgba: pathColor },
@@ -102,7 +102,7 @@ function createSatelliteEntities(sat: SatelliteInfo, settings: OrbitSettings) {
         scale: 1,
         verticalOrigin: 'CENTER',
         horizontalOrigin: 'CENTER',
-        disableDepthTestDistance: Number.POSITIVE_INFINITY,
+        disableDepthTestDistance: 0,
       },
       label: {
         show: settings.showLabels,
@@ -115,7 +115,7 @@ function createSatelliteEntities(sat: SatelliteInfo, settings: OrbitSettings) {
         verticalOrigin: 'TOP',
         pixelOffset: { cartesian2: [0, 28] },
         scale: 0.9,
-        disableDepthTestDistance: Number.POSITIVE_INFINITY,
+        disableDepthTestDistance: 0,
       },
     },
   ]

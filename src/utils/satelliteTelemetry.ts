@@ -1,10 +1,13 @@
 import {
+  BoundingSphere,
   Cartesian2,
   Cartesian3,
   Cartographic,
+  Ellipsoid,
   HeadingPitchRange,
   JulianDate,
   Math as CesiumMath,
+  Occluder,
 } from 'cesium'
 import type { Entity, Scene, Viewer as CesiumViewer } from 'cesium'
 
@@ -17,6 +20,14 @@ export type SatelliteTelemetry = {
 
 export function isSatelliteEntityId(id: string | undefined): id is string {
   return Boolean(id && !id.endsWith('-orbit'))
+}
+
+export function isPositionVisibleOnGlobe(scene: Scene, position: Cartesian3): boolean {
+  const cameraPosition = scene.camera.positionWC
+  const radius = scene.globe?.ellipsoid?.maximumRadius ?? Ellipsoid.WGS84.maximumRadius
+  const occluderSphere = new BoundingSphere(Cartesian3.ZERO, radius)
+  const occluder = new Occluder(occluderSphere, cameraPosition)
+  return occluder.isPointVisible(position)
 }
 
 export function getSatelliteTelemetry(
@@ -54,6 +65,10 @@ export function getEntityScreenPosition(
 
   const position = entity.position.getValue(time, new Cartesian3())
   if (!position) return null
+
+  if (!isPositionVisibleOnGlobe(scene, position)) {
+    return null
+  }
 
   const canvasPosition = scene.cartesianToCanvasCoordinates(position, new Cartesian2())
   if (!canvasPosition) return null
