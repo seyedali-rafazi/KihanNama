@@ -28,6 +28,7 @@ type GlobeControlMobileNavProps = {
   mobileOpen: PanelSection | false
   onMobileOpenChange: (section: PanelSection | false) => void
   satellites?: SatelliteInfo[]
+  isLoading?: boolean
   visibility: Record<string, boolean>
   activeCount?: number
   maxCount?: number
@@ -43,6 +44,7 @@ export function GlobeControlMobileNav({
   mobileOpen,
   onMobileOpenChange,
   satellites = [],
+  isLoading = false,
   visibility,
   activeCount = 0,
   maxCount = 10,
@@ -89,6 +91,7 @@ export function GlobeControlMobileNav({
         return (
           <SatellitesPanelContent
             satellites={satellites}
+            isLoading={isLoading}
             visibility={visibility}
             onToggleVisibility={onToggleVisibility}
             onZoomToSatellite={onZoomToSatellite}

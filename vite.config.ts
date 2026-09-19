@@ -46,13 +46,13 @@ export default defineConfig(({ mode }) => {
       },
       proxy: {
         '/api': {
-          target: 'http://127.0.0.1:8000',
+          target: env.VITE_BACKEND_URL || env.VITE_API_PROXY_TARGET || 'https://kihannama-backend.vercel.app',
           changeOrigin: true,
-          configure: (proxy) => {
+          secure: true,
+          configure: (proxy, options) => {
             proxy.on('error', (err) => {
               console.warn(
-                `\n[Vite Proxy] Warning: Could not connect to backend server at http://127.0.0.1:8000 (${err.message}). ` +
-                `Ensure the FastAPI backend is running with 'yarn dev:backend' or 'uvicorn app.main:app --port 8000'.\n`,
+                `\n[Vite Proxy] Warning: Could not connect to backend server at ${options.target} (${err.message}).\n`,
               )
             })
           },

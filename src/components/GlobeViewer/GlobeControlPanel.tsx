@@ -21,6 +21,7 @@ import GlobeControlMobileNav, { type PanelSection } from './controls/GlobeContro
 
 type GlobeControlPanelProps = {
   satellites?: SatelliteInfo[]
+  isLoading?: boolean
   visibility: Record<string, boolean>
   activeCount?: number
   maxCount?: number
@@ -34,6 +35,7 @@ type GlobeControlPanelProps = {
 
 function GlobeControlPanel({
   satellites = [],
+  isLoading = false,
   visibility,
   activeCount = 0,
   maxCount = 10,
@@ -63,6 +65,7 @@ function GlobeControlPanel({
         mobileOpen={mobileOpen}
         onMobileOpenChange={setMobileOpen}
         satellites={satellites}
+        isLoading={isLoading}
         visibility={visibility}
         activeCount={activeCount}
         maxCount={maxCount}
@@ -123,6 +126,7 @@ function GlobeControlPanel({
         <AccordionDetails sx={{ p: 0, pb: 0.5, overflow: 'hidden' }}>
           <SatellitesPanelContent
             satellites={satellites}
+            isLoading={isLoading}
             visibility={visibility}
             onToggleVisibility={onToggleVisibility}
             onZoomToSatellite={onZoomToSatellite}

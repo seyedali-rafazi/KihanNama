@@ -44,7 +44,7 @@ function GlobeViewer() {
   const initializedRef = useRef(false)
 
   const { data: czmlData } = useSatellitesCzmlQuery({ limit: 100 })
-  const { satellites: satelliteList } = useSatellitesQuery({ limit: 100 })
+  const { satellites: satelliteList, isLoading: isSatellitesLoading } = useSatellitesQuery({ limit: 100 })
 
   // Initialize only the first 10 satellites as active/visible on Earth
   useEffect(() => {
@@ -229,6 +229,7 @@ function GlobeViewer() {
 
         <GlobeControlPanel
           satellites={satelliteList}
+          isLoading={isSatellitesLoading}
           visibility={visibility}
           activeCount={activeCount}
           maxCount={MAX_VISIBLE_SATELLITES}
