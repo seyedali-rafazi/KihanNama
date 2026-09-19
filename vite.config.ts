@@ -38,6 +38,29 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react(), cesium(), seoPlugin(siteUrl)],
+    server: {
+      host: true,
+      port: 5173,
+      watch: {
+        ignored: ['**/backend/**'],
+      },
+      proxy: {
+        '/api': {
+          target: 'http://127.0.0.1:8000',
+          changeOrigin: true,
+          configure: (proxy) => {
+            proxy.on('error', (err) => {
+              console.warn(
+                `\n[Vite Proxy] Warning: Could not connect to backend server at http://127.0.0.1:8000 (${err.message}). ` +
+                `Ensure the FastAPI backend is running with 'yarn dev:backend' or 'uvicorn app.main:app --port 8000'.\n`,
+              )
+            })
+          },
+        },
+      },
+    },
+
+
     build: {
       rollupOptions: {
         output: {

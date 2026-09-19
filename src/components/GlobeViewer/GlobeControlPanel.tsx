@@ -11,7 +11,8 @@ import MapIcon from '@mui/icons-material/Map'
 import TuneIcon from '@mui/icons-material/Tune'
 import { useTheme } from '@mui/material/styles'
 import { useLanguage } from '../../context/LanguageContext'
-import type { MapType, OrbitSettings } from '../../types/globe'
+import type { MapType, OrbitSettings, SatelliteInfo } from '../../types/globe'
+import Chip from '@mui/material/Chip'
 import { getGlassAccordionSx, getGlassSummarySx } from './controls/controlPanelStyles'
 import SatellitesPanelContent from './controls/SatellitesPanelContent'
 import MapPanelContent from './controls/MapPanelContent'
@@ -19,7 +20,10 @@ import SettingsPanelContent from './controls/SettingsPanelContent'
 import GlobeControlMobileNav, { type PanelSection } from './controls/GlobeControlMobileNav'
 
 type GlobeControlPanelProps = {
+  satellites?: SatelliteInfo[]
   visibility: Record<string, boolean>
+  activeCount?: number
+  maxCount?: number
   mapType: MapType
   settings: OrbitSettings
   onToggleVisibility: (id: string) => void
@@ -29,7 +33,10 @@ type GlobeControlPanelProps = {
 }
 
 function GlobeControlPanel({
+  satellites = [],
   visibility,
+  activeCount = 0,
+  maxCount = 10,
   mapType,
   settings,
   onToggleVisibility,
@@ -55,7 +62,10 @@ function GlobeControlPanel({
       <GlobeControlMobileNav
         mobileOpen={mobileOpen}
         onMobileOpenChange={setMobileOpen}
+        satellites={satellites}
         visibility={visibility}
+        activeCount={activeCount}
+        maxCount={maxCount}
         mapType={mapType}
         settings={settings}
         onToggleVisibility={onToggleVisibility}
@@ -93,12 +103,26 @@ function GlobeControlPanel({
       >
         <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={glassSummary}>
           <SatelliteAltIcon sx={{ mr: 1.25, color: 'primary.light', fontSize: 22 }} />
-          <Typography variant="body1" sx={{ fontWeight: 600, color: 'text.primary', fontSize: '0.9rem' }}>
+          <Typography variant="body1" sx={{ fontWeight: 600, color: 'text.primary', fontSize: '0.9rem', flex: 1 }}>
             {t('panelSatellites')}
           </Typography>
+          <Chip
+            label={`${activeCount}/${maxCount}`}
+            size="small"
+            sx={{
+              mr: 1,
+              height: 20,
+              fontSize: '0.7rem',
+              fontWeight: 700,
+              bgcolor: activeCount >= maxCount ? 'rgba(255, 152, 0, 0.2)' : 'rgba(0, 229, 255, 0.15)',
+              color: activeCount >= maxCount ? '#ffb74d' : 'primary.light',
+              border: `1px solid ${activeCount >= maxCount ? 'rgba(255, 152, 0, 0.4)' : 'rgba(0, 229, 255, 0.3)'}`,
+            }}
+          />
         </AccordionSummary>
-        <AccordionDetails sx={{ p: 0, pb: 1, maxHeight: 380, overflowY: 'auto' }}>
+        <AccordionDetails sx={{ p: 0, pb: 0.5, overflow: 'hidden' }}>
           <SatellitesPanelContent
+            satellites={satellites}
             visibility={visibility}
             onToggleVisibility={onToggleVisibility}
             onZoomToSatellite={onZoomToSatellite}

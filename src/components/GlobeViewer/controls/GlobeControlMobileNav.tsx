@@ -6,10 +6,11 @@ import CloseIcon from '@mui/icons-material/Close'
 import SatelliteAltIcon from '@mui/icons-material/SatelliteAlt'
 import MapIcon from '@mui/icons-material/Map'
 import TuneIcon from '@mui/icons-material/Tune'
+import Chip from '@mui/material/Chip'
 import { alpha, useTheme } from '@mui/material/styles'
 import { useLanguage } from '../../../context/LanguageContext'
 import type { TranslationKey } from '../../../i18n/translations'
-import type { MapType, OrbitSettings } from '../../../types/globe'
+import type { MapType, OrbitSettings, SatelliteInfo } from '../../../types/globe'
 import { getGlassPanelSx } from './controlPanelStyles'
 import SatellitesPanelContent from './SatellitesPanelContent'
 import MapPanelContent from './MapPanelContent'
@@ -26,7 +27,10 @@ export const PANEL_ITEMS: { id: PanelSection; icon: typeof SatelliteAltIcon; lab
 type GlobeControlMobileNavProps = {
   mobileOpen: PanelSection | false
   onMobileOpenChange: (section: PanelSection | false) => void
+  satellites?: SatelliteInfo[]
   visibility: Record<string, boolean>
+  activeCount?: number
+  maxCount?: number
   mapType: MapType
   settings: OrbitSettings
   onToggleVisibility: (id: string) => void
@@ -38,7 +42,10 @@ type GlobeControlMobileNavProps = {
 export function GlobeControlMobileNav({
   mobileOpen,
   onMobileOpenChange,
+  satellites = [],
   visibility,
+  activeCount = 0,
+  maxCount = 10,
   mapType,
   settings,
   onToggleVisibility,
@@ -81,6 +88,7 @@ export function GlobeControlMobileNav({
       case 'satellites':
         return (
           <SatellitesPanelContent
+            satellites={satellites}
             visibility={visibility}
             onToggleVisibility={onToggleVisibility}
             onZoomToSatellite={onZoomToSatellite}
@@ -198,6 +206,20 @@ export function GlobeControlMobileNav({
                 <Typography variant="body1" sx={{ fontWeight: 600, fontSize: '0.95rem' }}>
                   {getPanelLabel(activePanel)}
                 </Typography>
+                {activePanel === 'satellites' && (
+                  <Chip
+                    label={`${activeCount}/${maxCount}`}
+                    size="small"
+                    sx={{
+                      height: 20,
+                      fontSize: '0.7rem',
+                      fontWeight: 700,
+                      bgcolor: activeCount >= maxCount ? 'rgba(255, 152, 0, 0.2)' : 'rgba(0, 229, 255, 0.15)',
+                      color: activeCount >= maxCount ? '#ffb74d' : 'primary.light',
+                      border: `1px solid ${activeCount >= maxCount ? 'rgba(255, 152, 0, 0.4)' : 'rgba(0, 229, 255, 0.3)'}`,
+                    }}
+                  />
+                )}
               </Box>
               <IconButton size="small" onClick={() => onMobileOpenChange(false)} sx={{ color: 'text.secondary' }}>
                 <CloseIcon fontSize="small" />

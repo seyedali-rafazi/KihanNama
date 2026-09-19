@@ -1,8 +1,9 @@
 import { NearFarScalar } from 'cesium'
 import type { Viewer as CesiumViewer, CzmlDataSource as CesiumCzmlDataSource } from 'cesium'
-import { SATELLITES } from '../../data/satellites'
 import { createSatelliteBillboardCanvas, SATELLITE_BILLBOARD_DISPLAY_SIZE } from '../../utils/satelliteBillboard'
-import type { OrbitSettings } from '../../types/globe'
+import type { OrbitSettings, SatelliteInfo } from '../../types/globe'
+
+const billboardCanvasCache = new Map<string, HTMLCanvasElement>()
 
 export function getDataSource(viewer: CesiumViewer, ref: CesiumCzmlDataSource | null): CesiumCzmlDataSource | null {
   if (ref) return ref
@@ -16,21 +17,41 @@ export function getDataSource(viewer: CesiumViewer, ref: CesiumCzmlDataSource | 
 }
 
 export function applyOrbitRendering(dataSource: CesiumCzmlDataSource, pathWidth: number) {
-  for (const sat of SATELLITES) {
-    const orbitEntity = dataSource.entities.getById(`${sat.id}-orbit`)
-    if (!orbitEntity?.polyline) continue
-
-    orbitEntity.polyline.width = pathWidth as unknown as typeof orbitEntity.polyline.width
+  const entities = dataSource.entities.values
+  for (const entity of entities) {
+    if (entity.polyline) {
+      entity.polyline.width = pathWidth as unknown as typeof entity.polyline.width
+    }
   }
 }
 
 export async function applySatelliteBillboards(dataSource: CesiumCzmlDataSource) {
+  const entities = dataSource.entities.values
   await Promise.all(
-    SATELLITES.map(async (sat) => {
-      const entity = dataSource.entities.getById(sat.id)
-      if (!entity?.billboard) return
+    entities.map(async (entity) => {
+      if (!entity?.billboard || entity.id.endsWith('-orbit')) return
 
-      const canvas = await createSatelliteBillboardCanvas(sat)
+      const entityId = entity.id
+      const entityName = entity.name || entityId
+      const cacheKey = entityId
+
+      let canvas = billboardCanvasCache.get(cacheKey)
+      if (!canvas) {
+        const satPlaceholder: SatelliteInfo = {
+          id: entityId,
+          name: entityName,
+          altitude: 500_000,
+          inclination: 51.6,
+          raan: 0,
+          phase: 0,
+          period: 5500,
+          color: [0, 229, 255, 255],
+          image: '',
+        }
+        canvas = await createSatelliteBillboardCanvas(satPlaceholder)
+        billboardCanvasCache.set(cacheKey, canvas)
+      }
+
       entity.billboard.image = canvas as unknown as typeof entity.billboard.image
       entity.billboard.width = SATELLITE_BILLBOARD_DISPLAY_SIZE as unknown as typeof entity.billboard.width
       entity.billboard.height = SATELLITE_BILLBOARD_DISPLAY_SIZE as unknown as typeof entity.billboard.height
@@ -62,24 +83,24 @@ export function applyEntitySettings(
   settings: OrbitSettings,
   visibility: Record<string, boolean>,
 ) {
-  for (const sat of SATELLITES) {
-    const visible = visibility[sat.id] ?? true
-    const orbitEntity = dataSource.entities.getById(`${sat.id}-orbit`)
-    const satEntity = dataSource.entities.getById(sat.id)
-
-    if (orbitEntity?.polyline) {
-      orbitEntity.polyline.width = settings.pathWidth as unknown as typeof orbitEntity.polyline.width
-      orbitEntity.show = visible && settings.showOrbits
+  const entities = dataSource.entities.values
+  for (const entity of entities) {
+    if (entity.polyline) {
+      const parentId = entity.id.replace(/-orbit$/, '')
+      const visible = Boolean(visibility[parentId] ?? visibility[entity.id])
+      entity.polyline.width = settings.pathWidth as unknown as typeof entity.polyline.width
+      entity.show = visible && settings.showOrbits
     }
 
-    if (satEntity) {
-      satEntity.show = visible
-      if (satEntity.billboard) {
-        satEntity.billboard.disableDepthTestDistance = 0 as unknown as typeof satEntity.billboard.disableDepthTestDistance
+    if (entity.billboard || (entity.position && !entity.id.endsWith('-orbit'))) {
+      const visible = Boolean(visibility[entity.id])
+      entity.show = visible
+      if (entity.billboard) {
+        entity.billboard.disableDepthTestDistance = 0 as unknown as typeof entity.billboard.disableDepthTestDistance
       }
-      if (satEntity.label) {
-        satEntity.label.show = settings.showLabels as unknown as typeof satEntity.label.show
-        satEntity.label.disableDepthTestDistance = 0 as unknown as typeof satEntity.label.disableDepthTestDistance
+      if (entity.label) {
+        entity.label.show = settings.showLabels as unknown as typeof entity.label.show
+        entity.label.disableDepthTestDistance = 0 as unknown as typeof entity.label.disableDepthTestDistance
       }
     }
   }

@@ -1,33 +1,45 @@
+import { useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
 import TextField from '@mui/material/TextField'
 import MenuItem from '@mui/material/MenuItem'
 import InputAdornment from '@mui/material/InputAdornment'
 import SearchIcon from '@mui/icons-material/Search'
 import { useLanguage } from '../../context/LanguageContext'
-import type { OrbitClass, SatelliteCategory, SortOption } from '../../types/satellite'
+import type { OrbitClass, SatelliteCategory } from '../../types/satellite'
 
 type SatelliteFiltersProps = {
   search: string
   category: SatelliteCategory | 'all'
   orbitClass: OrbitClass | 'all'
-  sort: SortOption
   onSearchChange: (value: string) => void
   onCategoryChange: (value: SatelliteCategory | 'all') => void
   onOrbitChange: (value: OrbitClass | 'all') => void
-  onSortChange: (value: SortOption) => void
 }
 
 function SatelliteFilters({
   search,
   category,
   orbitClass,
-  sort,
   onSearchChange,
   onCategoryChange,
   onOrbitChange,
-  onSortChange,
 }: SatelliteFiltersProps) {
   const { t } = useLanguage()
+  const [searchTerm, setSearchTerm] = useState(search)
+
+  useEffect(() => {
+    setSearchTerm(search)
+  }, [search])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchTerm !== search) {
+        onSearchChange(searchTerm)
+      }
+    }, 400)
+
+    return () => clearTimeout(timer)
+  }, [searchTerm, search, onSearchChange])
 
   const selectSx = { minWidth: { xs: '100%', sm: 160 } }
 
@@ -42,8 +54,13 @@ function SatelliteFilters({
     >
       <TextField
         size="small"
-        value={search}
-        onChange={(e) => onSearchChange(e.target.value)}
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            onSearchChange(searchTerm)
+          }
+        }}
         placeholder={t('searchSatellites')}
         sx={{ flex: { xs: '1 1 100%', sm: '1 1 240px' }, maxWidth: { sm: 320 } }}
         slotProps={{
@@ -86,22 +103,6 @@ function SatelliteFilters({
         <MenuItem value="leo">LEO</MenuItem>
         <MenuItem value="meo">MEO</MenuItem>
         <MenuItem value="geo">GEO</MenuItem>
-      </TextField>
-
-      <TextField
-        select
-        size="small"
-        label={t('sortBy')}
-        value={sort}
-        onChange={(e) => onSortChange(e.target.value as SortOption)}
-        sx={selectSx}
-      >
-        <MenuItem value="nameAsc">{t('sortNameAsc')}</MenuItem>
-        <MenuItem value="nameDesc">{t('sortNameDesc')}</MenuItem>
-        <MenuItem value="altitudeAsc">{t('sortAltitudeAsc')}</MenuItem>
-        <MenuItem value="altitudeDesc">{t('sortAltitudeDesc')}</MenuItem>
-        <MenuItem value="periodAsc">{t('sortPeriodAsc')}</MenuItem>
-        <MenuItem value="periodDesc">{t('sortPeriodDesc')}</MenuItem>
       </TextField>
     </Box>
   )

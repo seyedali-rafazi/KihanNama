@@ -5,7 +5,6 @@ import { alpha, useTheme } from '@mui/material/styles'
 import type { Viewer as CesiumViewer, CzmlDataSource as CesiumCzmlDataSource } from 'cesium'
 import type { CesiumComponentRef } from 'resium'
 import { useLanguage } from '../../context/LanguageContext'
-import { SATELLITES } from '../../data/satellites'
 import {
   formatAltitude,
   formatCoordinate,
@@ -33,10 +32,9 @@ function SatelliteInfoBadge({
   const [screenPos, setScreenPos] = useState<{ x: number; y: number } | null>(null)
   const [telemetry, setTelemetry] = useState<SatelliteTelemetry | null>(null)
 
-  const satellite = satelliteId ? SATELLITES.find((sat) => sat.id === satelliteId) : undefined
-  const accentColor = satellite
-    ? `rgb(${satellite.color[0]}, ${satellite.color[1]}, ${satellite.color[2]})`
-    : undefined
+  const entity = satelliteId && dataSourceRef.current ? dataSourceRef.current.entities.getById(satelliteId) : null
+  const satelliteName = entity?.name || satelliteId || ''
+  const accentColor = '#00e5ff'
 
   useEffect(() => {
     const viewer = viewerRef.current?.cesiumElement
@@ -75,7 +73,7 @@ function SatelliteInfoBadge({
     }
   }, [viewerRef, dataSourceRef, satelliteId])
 
-  if (!satelliteId || !satellite || !accentColor || !screenPos || !telemetry) return null
+  if (!satelliteId || !screenPos || !telemetry) return null
 
   return (
     <Box
@@ -111,7 +109,7 @@ function SatelliteInfoBadge({
           color: accentColor,
         }}
       >
-        {satellite.name}
+        {satelliteName}
       </Typography>
 
       <Box

@@ -1,16 +1,19 @@
-import { useCallback } from 'react'
+import { useState } from 'react'
 import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
+import Skeleton from '@mui/material/Skeleton'
 import { useLanguage } from '../context/LanguageContext'
-import { LAUNCHER_CATALOG } from '../data/launcherCatalog'
 import CatalogCard from '../components/Catalog/CatalogCard'
 import CatalogFilters from '../components/Catalog/CatalogFilters'
 import CatalogDetailModal from '../components/Catalog/CatalogDetailModal'
 import PageHero from '../components/common/PageHero'
-import { useCatalogFilter } from '../hooks/useCatalogFilter'
-import { sortCatalog, type CatalogEntry, type CatalogSortOption, type FilterOption } from '../types/catalog'
+import BackendStatusBadge from '../components/common/BackendStatusBadge'
+import AppPagination from '../components/common/AppPagination'
+import { useLaunchersQuery } from '../hooks/queries'
+import { type CatalogEntry, type FilterOption } from '../types/catalog'
 
 const LAUNCHER_HERO_IMAGE = '/launchers-page.webp'
+const PAGE_SIZE = 12
 
 const CATEGORY_OPTIONS: FilterOption[] = [
   { value: 'heavyLift', labelKey: 'catHeavyLift' },
@@ -25,50 +28,36 @@ const STATUS_OPTIONS: FilterOption[] = [
   { value: 'developmental', labelKey: 'statusDevelopmental' },
 ]
 
-const SORT_OPTIONS: { value: CatalogSortOption; labelKey: 'sortNameAsc' | 'sortNameDesc' | 'sortYearAsc' | 'sortYearDesc' | 'sortPayloadAsc' | 'sortPayloadDesc' }[] = [
-  { value: 'nameAsc', labelKey: 'sortNameAsc' },
-  { value: 'nameDesc', labelKey: 'sortNameDesc' },
-  { value: 'yearAsc', labelKey: 'sortYearAsc' },
-  { value: 'yearDesc', labelKey: 'sortYearDesc' },
-  { value: 'metricAsc', labelKey: 'sortPayloadAsc' },
-  { value: 'metricDesc', labelKey: 'sortPayloadDesc' },
-]
-
 function LaunchersPage() {
   const { t } = useLanguage()
+  const [page, setPage] = useState(1)
+  const [search, setSearch] = useState('')
+  const [category, setCategory] = useState('all')
+  const [status, setStatus] = useState('all')
+  const [selected, setSelected] = useState<CatalogEntry | null>(null)
 
-  const filterPredicate = useCallback(
-    (item: CatalogEntry, query: string, category: string, status: string) => {
-      if (query) {
-        const text = `${item.name} ${item.descriptionEn} ${item.descriptionFa} ${item.operatorEn}`.toLowerCase()
-        if (!text.includes(query)) return false
-      }
-      if (category !== 'all' && item.category !== category) return false
-      if (status !== 'all' && item.secondary !== status) return false
-      return true
-    },
-    [],
-  )
+  const handleSearchChange = (val: string) => {
+    setSearch(val)
+    setPage(1)
+  }
 
-  const {
-    search,
-    setSearch,
-    category,
-    setCategory,
-    secondaryFilter: status,
-    setSecondaryFilter: setStatus,
-    sort,
-    setSort,
-    selected,
-    setSelected,
-    clearSelected,
-    filteredItems,
-    count,
-  } = useCatalogFilter<CatalogEntry, CatalogSortOption>({
-    items: LAUNCHER_CATALOG,
-    initialSort: 'nameAsc',
-    filterPredicate,
-    sortComparator: sortCatalog,
+  const handleCategoryChange = (val: string) => {
+    setCategory(val)
+    setPage(1)
+  }
+
+  const handleStatusChange = (val: string) => {
+    setStatus(val)
+    setPage(1)
+  }
+
+  // Fetch paginated launchers with React Query from backend API
+  const { items: launcherData, total, isLoading } = useLaunchersQuery({
+    category: category !== 'all' ? category : undefined,
+    status: status !== 'all' ? status : undefined,
+    search: search.trim() || undefined,
+    page,
+    limit: PAGE_SIZE,
   })
 
   return (
@@ -85,38 +74,59 @@ function LaunchersPage() {
           searchPlaceholderKey="searchLaunchers"
           category={category}
           secondaryFilter={status}
-          sort={sort}
           categoryOptions={CATEGORY_OPTIONS}
           secondaryOptions={STATUS_OPTIONS}
           secondaryLabelKey="filterStatus"
-          sortOptions={SORT_OPTIONS}
-          onSearchChange={setSearch}
-          onCategoryChange={setCategory}
-          onSecondaryChange={setStatus}
-          onSortChange={setSort}
+          onSearchChange={handleSearchChange}
+          onCategoryChange={handleCategoryChange}
+          onSecondaryChange={handleStatusChange}
         />
 
-        <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 2 }}>
-          {count} {t('launchersFound')}
-        </Typography>
-
-        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)', lg: 'repeat(4, 1fr)' }, gap: 2.5 }}>
-          {filteredItems.map((item) => (
-            <CatalogCard key={item.id} item={item} placeholderType="launcher" onClick={() => setSelected(item)} />
-          ))}
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+          <Typography variant="caption" color="text.secondary">
+            {total} {t('launchersFound')}
+          </Typography>
+          <BackendStatusBadge />
         </Box>
 
-        {count === 0 && (
+        {isLoading ? (
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)', lg: 'repeat(4, 1fr)' }, gap: 2.5 }}>
+            {Array.from({ length: 8 }).map((_, i) => (
+              <Box key={i} sx={{ borderRadius: 3, overflow: 'hidden', bgcolor: 'background.paper', p: 2 }}>
+                <Skeleton variant="rectangular" height={160} sx={{ borderRadius: 2, mb: 2 }} />
+                <Skeleton variant="text" width="60%" height={28} />
+                <Skeleton variant="text" width="90%" height={20} />
+                <Skeleton variant="text" width="40%" height={20} />
+              </Box>
+            ))}
+          </Box>
+        ) : (
+          <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)', lg: 'repeat(4, 1fr)' }, gap: 2.5 }}>
+            {launcherData.map((item) => (
+              <CatalogCard key={item.id} item={item} placeholderType="launcher" onClick={() => setSelected(item)} />
+            ))}
+          </Box>
+        )}
+
+        {!isLoading && total === 0 && (
           <Box sx={{ textAlign: 'center', py: 8 }}>
             <Typography color="text.secondary">{t('noLaunchersFound')}</Typography>
           </Box>
         )}
+
+        <AppPagination
+          page={page}
+          total={total}
+          limit={PAGE_SIZE}
+          onPageChange={setPage}
+          disabled={isLoading}
+        />
       </Box>
 
       <CatalogDetailModal
         item={selected}
         open={Boolean(selected)}
-        onClose={clearSelected}
+        onClose={() => setSelected(null)}
         placeholderType="launcher"
         infographicTitleKey="launcherInfographic"
         stepsLabelKey="launchSteps"

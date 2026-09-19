@@ -1,8 +1,4 @@
-import { SATELLITES } from '../../data/satellites'
-
-export const INITIAL_SATELLITE_VISIBILITY: Record<string, boolean> = Object.fromEntries(
-  SATELLITES.map((s) => [s.id, true]),
-)
+export const INITIAL_SATELLITE_VISIBILITY: Record<string, boolean> = {}
 
 export const HOME_VIEW = {
   lon: 0,
