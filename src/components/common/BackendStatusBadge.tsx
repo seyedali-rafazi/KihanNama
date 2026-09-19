@@ -14,14 +14,14 @@ export default function BackendStatusBadge() {
   const titleEn = isConnected
     ? `Backend Online · ${health?.counts?.satellites || 0} Satellites · ${health?.counts?.launchers || 0} Launchers`
     : isLoading
-    ? 'Checking API...'
-    : 'Offline Mode (Local Cache Active)'
+      ? 'Checking API...'
+      : 'Offline Mode (Local Cache Active)'
 
   const titleFa = isConnected
     ? `سرور آنلاین · ${health?.counts?.satellites || 0} ماهواره · ${health?.counts?.launchers || 0} پرتاب‌گر`
     : isLoading
-    ? 'بررسی ارتباط...'
-    : 'حالت آفلاین (استفاده از کش محلی)'
+      ? 'بررسی ارتباط...'
+      : 'حالت آفلاین (استفاده از کش محلی)'
 
   const tooltipText = language === 'fa' ? titleFa : titleEn
 
@@ -38,14 +38,14 @@ export default function BackendStatusBadge() {
           bgcolor: isConnected
             ? 'rgba(0, 230, 118, 0.08)'
             : isError
-            ? 'rgba(255, 171, 0, 0.08)'
-            : 'rgba(255, 255, 255, 0.05)',
+              ? 'rgba(255, 171, 0, 0.08)'
+              : 'rgba(255, 255, 255, 0.05)',
           border: '1px solid',
           borderColor: isConnected
             ? 'rgba(0, 230, 118, 0.25)'
             : isError
-            ? 'rgba(255, 171, 0, 0.25)'
-            : 'rgba(255, 255, 255, 0.1)',
+              ? 'rgba(255, 171, 0, 0.25)'
+              : 'rgba(255, 255, 255, 0.1)',
           cursor: 'default',
           transition: 'all 0.2s ease',
         }}
@@ -63,17 +63,6 @@ export default function BackendStatusBadge() {
             }}
           />
         )}
-        <Typography
-          variant="caption"
-          sx={{
-            fontWeight: 600,
-            fontSize: '0.75rem',
-            color: isConnected ? '#00e676' : isError ? '#ffab00' : 'text.secondary',
-            letterSpacing: '0.02em',
-          }}
-        >
-          {isConnected ? 'API Live' : isLoading ? 'Connecting...' : 'Cached'}
-        </Typography>
       </Box>
     </Tooltip>
   )
