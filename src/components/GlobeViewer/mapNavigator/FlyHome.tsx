@@ -7,14 +7,16 @@ import { useTheme } from '@mui/material/styles'
 import type { Viewer as CesiumViewer } from 'cesium'
 import type { CesiumComponentRef } from 'resium'
 import { useLanguage } from '../../../context/LanguageContext'
+import { IRAN_VIEW } from '../globeConstants'
 import { getCesiumViewer } from './cesiumUtils'
 import { getNavButtonSx } from './navButtonStyles'
 
 type FlyHomeProps = {
   viewerRef: React.RefObject<CesiumComponentRef<CesiumViewer> | null>
+  onFlyHome?: () => void
 }
 
-function FlyHome({ viewerRef }: FlyHomeProps) {
+function FlyHome({ viewerRef, onFlyHome }: FlyHomeProps) {
   const theme = useTheme()
   const { t } = useLanguage()
 
@@ -22,8 +24,13 @@ function FlyHome({ viewerRef }: FlyHomeProps) {
     const viewer = getCesiumViewer(viewerRef)
     if (!viewer) return
 
+    onFlyHome?.()
+
+    viewer.trackedEntity = undefined
+    viewer.selectedEntity = undefined
+
     viewer.camera.flyTo({
-      destination: Cartesian3.fromDegrees(53, 35, 4_500_000),
+      destination: Cartesian3.fromDegrees(IRAN_VIEW.lon, IRAN_VIEW.lat, IRAN_VIEW.altitude),
       duration: 1.5,
     })
   }

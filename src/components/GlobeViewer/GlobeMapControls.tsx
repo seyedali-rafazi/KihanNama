@@ -9,9 +9,10 @@ import BoxZoomControl from './mapNavigator/BoxZoomControl'
 
 type GlobeMapControlsProps = {
   viewerRef: React.RefObject<CesiumComponentRef<CesiumViewer> | null>
+  onFlyHome?: () => void
 }
 
-function GlobeMapControls({ viewerRef }: GlobeMapControlsProps) {
+function GlobeMapControls({ viewerRef, onFlyHome }: GlobeMapControlsProps) {
   const theme = useTheme()
 
   return (
@@ -38,7 +39,7 @@ function GlobeMapControls({ viewerRef }: GlobeMapControlsProps) {
         width: 'fit-content',
       }}
     >
-      <FlyHome viewerRef={viewerRef} />
+      <FlyHome viewerRef={viewerRef} onFlyHome={onFlyHome} />
       <ZoomControl viewerRef={viewerRef} />
       <LocateUser viewerRef={viewerRef} />
       <BoxZoomControl viewerRef={viewerRef} />

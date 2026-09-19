@@ -27,6 +27,7 @@ type GlobeControlPanelProps = {
   maxCount?: number
   mapType: MapType
   settings: OrbitSettings
+  zoomedSatelliteId?: string | null
   onToggleVisibility: (id: string) => void
   onZoomToSatellite: (id: string) => void
   onMapTypeChange: (mapType: MapType) => void
@@ -41,6 +42,7 @@ function GlobeControlPanel({
   maxCount = 10,
   mapType,
   settings,
+  zoomedSatelliteId,
   onToggleVisibility,
   onZoomToSatellite,
   onMapTypeChange,
@@ -71,6 +73,7 @@ function GlobeControlPanel({
         maxCount={maxCount}
         mapType={mapType}
         settings={settings}
+        zoomedSatelliteId={zoomedSatelliteId}
         onToggleVisibility={onToggleVisibility}
         onZoomToSatellite={onZoomToSatellite}
         onMapTypeChange={onMapTypeChange}
@@ -131,6 +134,7 @@ function GlobeControlPanel({
             onToggleVisibility={onToggleVisibility}
             onZoomToSatellite={onZoomToSatellite}
             zoomLabel={t('zoomToSatellite')}
+            zoomedSatelliteId={zoomedSatelliteId}
           />
         </AccordionDetails>
       </Accordion>

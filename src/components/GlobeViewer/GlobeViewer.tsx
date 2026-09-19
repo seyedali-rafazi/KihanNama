@@ -12,7 +12,7 @@ import { useSatellitesCzmlQuery, useSatellitesQuery } from '../../hooks/queries'
 import { applyMapType } from '../../utils/mapProviders'
 import { flyToSatelliteEntity } from '../../utils/satelliteTelemetry'
 import { DEFAULT_ORBIT_SETTINGS, type MapType, type OrbitSettings } from '../../types/globe'
-import { HOME_VIEW } from './globeConstants'
+import { HOME_VIEW, IRAN_VIEW } from './globeConstants'
 import {
   applyEntitySettings,
   applyOrbitRendering,
@@ -42,6 +42,14 @@ function GlobeViewer() {
   const [satellitesReady, setSatellitesReady] = useState(false)
   const [limitWarningOpen, setLimitWarningOpen] = useState(false)
   const initializedRef = useRef(false)
+  const previousCameraRef = useRef<{
+    destination: Cartesian3
+    orientation: {
+      heading: number
+      pitch: number
+      roll: number
+    }
+  } | null>(null)
 
   const { data: czmlData } = useSatellitesCzmlQuery({ limit: 100 })
   const { satellites: satelliteList, isLoading: isSatellitesLoading } = useSatellitesQuery({ limit: 100 })
@@ -167,6 +175,17 @@ function GlobeViewer() {
     const entity = dataSource.entities.getById(id)
     if (!entity?.position) return
 
+    if (!viewer.trackedEntity && !previousCameraRef.current) {
+      previousCameraRef.current = {
+        destination: viewer.camera.positionWC.clone(),
+        orientation: {
+          heading: viewer.camera.heading,
+          pitch: viewer.camera.pitch,
+          roll: viewer.camera.roll,
+        },
+      }
+    }
+
     if (!visibility[id]) {
       const currentActiveCount = Object.values(visibility).filter(Boolean).length
       if (currentActiveCount >= MAX_VISIBLE_SATELLITES) {
@@ -180,7 +199,7 @@ function GlobeViewer() {
     void flyToSatelliteEntity(viewer, entity, sat?.altitude || 500_000, isMobile ? 1.35 : 1)
   }, [visibility, isMobile, satelliteList])
 
-  const { activeBadgeId, pinnedSatelliteId, pinSatellite } = useSatelliteInteractions({
+  const { activeBadgeId, pinnedSatelliteId, pinSatellite, clearPinnedSatellite } = useSatelliteInteractions({
     viewerRef,
     dataSourceRef,
     onZoomToSatellite: handleZoomToSatellite,
@@ -188,9 +207,41 @@ function GlobeViewer() {
   })
 
   const handleAccordionZoom = useCallback((id: string) => {
+    const viewer = viewerRef.current?.cesiumElement
+
+    // If already zoomed into this satellite, toggle off and restore previous view
+    if (pinnedSatelliteId === id) {
+      clearPinnedSatellite()
+
+      if (viewer) {
+        viewer.trackedEntity = undefined
+        viewer.selectedEntity = undefined
+
+        if (previousCameraRef.current) {
+          viewer.camera.flyTo({
+            destination: previousCameraRef.current.destination,
+            orientation: previousCameraRef.current.orientation,
+            duration: 1.5,
+          })
+          previousCameraRef.current = null
+        } else {
+          viewer.camera.flyTo({
+            destination: Cartesian3.fromDegrees(IRAN_VIEW.lon, IRAN_VIEW.lat, IRAN_VIEW.altitude),
+            duration: 1.5,
+          })
+        }
+      }
+      return
+    }
+
     pinSatellite(id)
     handleZoomToSatellite(id)
-  }, [handleZoomToSatellite, pinSatellite])
+  }, [pinnedSatelliteId, clearPinnedSatellite, pinSatellite, handleZoomToSatellite])
+
+  const handleFlyHome = useCallback(() => {
+    clearPinnedSatellite()
+    previousCameraRef.current = null
+  }, [clearPinnedSatellite])
 
   const handleSettingsChange = useCallback((partial: Partial<OrbitSettings>) => {
     setSettings((prev) => ({ ...prev, ...partial }))
@@ -235,13 +286,14 @@ function GlobeViewer() {
           maxCount={MAX_VISIBLE_SATELLITES}
           mapType={mapType}
           settings={settings}
+          zoomedSatelliteId={pinnedSatelliteId}
           onToggleVisibility={handleToggleVisibility}
           onZoomToSatellite={handleAccordionZoom}
           onMapTypeChange={setMapType}
           onSettingsChange={handleSettingsChange}
         />
 
-        <GlobeMapControls viewerRef={viewerRef} />
+        <GlobeMapControls viewerRef={viewerRef} onFlyHome={handleFlyHome} />
       </GlobeUiLayer>
 
       <Snackbar

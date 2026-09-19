@@ -34,6 +34,7 @@ type GlobeControlMobileNavProps = {
   maxCount?: number
   mapType: MapType
   settings: OrbitSettings
+  zoomedSatelliteId?: string | null
   onToggleVisibility: (id: string) => void
   onZoomToSatellite: (id: string) => void
   onMapTypeChange: (mapType: MapType) => void
@@ -50,6 +51,7 @@ export function GlobeControlMobileNav({
   maxCount = 10,
   mapType,
   settings,
+  zoomedSatelliteId,
   onToggleVisibility,
   onZoomToSatellite,
   onMapTypeChange,
@@ -96,6 +98,7 @@ export function GlobeControlMobileNav({
             onToggleVisibility={onToggleVisibility}
             onZoomToSatellite={onZoomToSatellite}
             zoomLabel={t('zoomToSatellite')}
+            zoomedSatelliteId={zoomedSatelliteId}
             simple
           />
         )

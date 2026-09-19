@@ -15,6 +15,7 @@ type SatellitesPanelContentProps = {
   onToggleVisibility: (id: string) => void
   onZoomToSatellite: (id: string) => void
   zoomLabel: string
+  zoomedSatelliteId?: string | null
   simple?: boolean
   height?: number | string
 }
@@ -90,11 +91,13 @@ export function SatellitesPanelContent({
   onToggleVisibility,
   onZoomToSatellite,
   zoomLabel,
+  zoomedSatelliteId,
   simple = false,
   height = simple ? '55vh' : 380,
 }: SatellitesPanelContentProps) {
   const { t } = useLanguage()
   const parentRef = useRef<HTMLDivElement>(null)
+
 
   const rowVirtualizer = useVirtualizer({
     count: satellites.length,
@@ -185,6 +188,7 @@ export function SatellitesPanelContent({
                 onToggleVisibility={onToggleVisibility}
                 onZoomToSatellite={onZoomToSatellite}
                 zoomLabel={zoomLabel}
+                isZoomed={Boolean(zoomedSatelliteId && sat.id === zoomedSatelliteId)}
                 simple={simple}
               />
             </Box>

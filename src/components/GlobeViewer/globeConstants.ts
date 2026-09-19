@@ -6,3 +6,10 @@ export const HOME_VIEW = {
   altitudeDesktop: 25_000_000,
   altitudeMobile: 27_000_000,
 } as const
+
+export const IRAN_VIEW = {
+  lon: 53,
+  lat: 35,
+  altitude: 4_500_000,
+} as const
+
