@@ -11,7 +11,6 @@ import CatalogCard from '../components/Catalog/CatalogCard'
 import CatalogFilters from '../components/Catalog/CatalogFilters'
 import CatalogDetailModal from '../components/Catalog/CatalogDetailModal'
 import PageHero from '../components/common/PageHero'
-import BackendStatusBadge from '../components/common/BackendStatusBadge'
 import AppPagination from '../components/common/AppPagination'
 import { useSpaceStationsQuery, useGroundStationsQuery } from '../hooks/queries'
 import { type CatalogEntry, type FilterOption } from '../types/catalog'
@@ -159,7 +158,6 @@ function SatelliteStationPage() {
           <Typography variant="caption" color="text.secondary">
             {total} {t('stationsFound')}
           </Typography>
-          <BackendStatusBadge />
         </Box>
 
         {isLoading ? (

@@ -7,7 +7,6 @@ import SatelliteCard from '../components/Satellites/SatelliteCard'
 import SatelliteFilters from '../components/Satellites/SatelliteFilters'
 import SatelliteDetailModal from '../components/Satellites/SatelliteDetailModal'
 import PageHero from '../components/common/PageHero'
-import BackendStatusBadge from '../components/common/BackendStatusBadge'
 import AppPagination from '../components/common/AppPagination'
 import { useSatellitesQuery } from '../hooks/queries'
 import type { OrbitClass, SatelliteCatalogEntry, SatelliteCategory } from '../types/satellite'
@@ -76,7 +75,6 @@ function SatellitesPage() {
           <Typography variant="caption" color="text.secondary">
             {total} {t('resultsCount')}
           </Typography>
-          <BackendStatusBadge />
         </Box>
 
         {isLoading ? (

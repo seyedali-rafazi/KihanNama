@@ -7,7 +7,6 @@ import CatalogCard from '../components/Catalog/CatalogCard'
 import CatalogFilters from '../components/Catalog/CatalogFilters'
 import CatalogDetailModal from '../components/Catalog/CatalogDetailModal'
 import PageHero from '../components/common/PageHero'
-import BackendStatusBadge from '../components/common/BackendStatusBadge'
 import AppPagination from '../components/common/AppPagination'
 import { useLaunchersQuery } from '../hooks/queries'
 import { type CatalogEntry, type FilterOption } from '../types/catalog'
@@ -86,7 +85,6 @@ function LaunchersPage() {
           <Typography variant="caption" color="text.secondary">
             {total} {t('launchersFound')}
           </Typography>
-          <BackendStatusBadge />
         </Box>
 
         {isLoading ? (
