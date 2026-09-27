@@ -1,5 +1,7 @@
 export type MapType = 'dark' | 'satellite' | 'street'
 
+export const DEFAULT_MAP_TYPE: MapType = 'satellite'
+
 export type OrbitSettings = {
   pathWidth: number
   showLabels: boolean

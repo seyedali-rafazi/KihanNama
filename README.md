@@ -15,7 +15,7 @@
 - Toggle individual satellites, zoom to a selected satellite, and adjust orbit display settings
 
 ### Map Controls
-- **Map styles:** Dark (CartoDB), satellite imagery (Esri World Imagery), and street map (OpenStreetMap)
+- **Map styles:** Dark (CartoDB Dark Matter), satellite imagery (Google Satellite), and street map (OpenStreetMap)
 - **Navigation:** Zoom in/out, compass with north reset, fly to Iran, IP-based geolocation, and rectangular box zoom
 - **Orbit settings:** Orbit path thickness, animation speed, show/hide labels and orbit paths
 
@@ -90,7 +90,7 @@ Edit `.env`:
 VITE_CESIUM_ION_TOKEN=your_cesium_ion_token_here
 ```
 
-> **Note:** The app uses free public tile providers (CartoDB, Esri, OpenStreetMap) for basemaps, so it runs without a token. A Cesium Ion token may still be useful for default terrain or other Ion-hosted assets.
+> **Note:** The app uses free public tile providers (CartoDB Dark Matter, Google Satellite, OpenStreetMap) for basemaps, so it runs without a token. A Cesium Ion token may still be useful for default terrain or other Ion-hosted assets.
 
 ### 3. Start the development server
 
@@ -201,7 +201,7 @@ To add a satellite to the globe:
 |---------|-------|
 | [Cesium Ion](https://ion.cesium.com/) | Optional access token for Cesium assets |
 | [CartoDB Dark Matter](https://carto.com/basemaps/) | Dark basemap tiles |
-| [Esri World Imagery](https://www.arcgis.com/home/item.html?id=10df227e0e4e4144b8cb4879cf5d0ae2) | Satellite imagery basemap |
+| [Google Satellite](https://maps.google.com/) | Satellite / Earth imagery basemap |
 | [OpenStreetMap](https://www.openstreetmap.org/) | Street map basemap |
 | [ipapi.co](https://ipapi.co/) | IP-based geolocation for "Locate me" |
 | [Wikimedia Commons](https://commons.wikimedia.org/) | Satellite and catalog thumbnail images |

@@ -11,7 +11,7 @@ import type { Viewer as CesiumViewer, CzmlDataSource as CesiumCzmlDataSource } f
 import { useSatellitesCzmlQuery, useSatellitesQuery } from '../../hooks/queries'
 import { applyMapType } from '../../utils/mapProviders'
 import { flyToSatelliteEntity } from '../../utils/satelliteTelemetry'
-import { DEFAULT_ORBIT_SETTINGS, type MapType, type OrbitSettings } from '../../types/globe'
+import { DEFAULT_MAP_TYPE, DEFAULT_ORBIT_SETTINGS, type MapType, type OrbitSettings } from '../../types/globe'
 import { HOME_VIEW, IRAN_VIEW } from './globeConstants'
 import {
   applyEntitySettings,
@@ -36,7 +36,7 @@ function GlobeViewer() {
   const viewerRef = useRef<CesiumComponentRef<CesiumViewer>>(null)
   const dataSourceRef = useRef<CesiumCzmlDataSource | null>(null)
   const { markReady } = useLoading()
-  const [mapType, setMapType] = useState<MapType>('dark')
+  const [mapType, setMapType] = useState<MapType>(DEFAULT_MAP_TYPE)
   const [settings, setSettings] = useState<OrbitSettings>(DEFAULT_ORBIT_SETTINGS)
   const [visibility, setVisibility] = useState<Record<string, boolean>>({})
   const [satellitesReady, setSatellitesReady] = useState(false)

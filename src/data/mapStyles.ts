@@ -8,14 +8,14 @@ export type MapStyleOption = {
 
 export const MAP_STYLE_OPTIONS: MapStyleOption[] = [
   {
-    type: 'dark',
-    labelKey: 'mapDark',
-    preview: 'https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/3/3/4',
-  },
-  {
     type: 'satellite',
     labelKey: 'mapSatellite',
-    preview: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/3/3/4',
+    preview: 'https://mt1.google.com/vt/lyrs=s&x=4&y=2&z=3',
+  },
+  {
+    type: 'dark',
+    labelKey: 'mapDark',
+    preview: 'https://a.basemaps.cartocdn.com/dark_all/3/4/2.png',
   },
   {
     type: 'street',
@@ -23,3 +23,4 @@ export const MAP_STYLE_OPTIONS: MapStyleOption[] = [
     preview: 'https://tile.openstreetmap.org/3/4/2.png',
   },
 ]
+
