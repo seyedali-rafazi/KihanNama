@@ -56,7 +56,7 @@ function PageHero({ title, subtitle, imageUrl }: PageHeroProps) {
         sx={{
           position: 'absolute',
           inset: 0,
-          background: `linear-gradient(135deg, ${alpha(theme.palette.background.default, 0.92)} 0%, ${alpha(theme.palette.background.default, 0.55)} 55%, ${alpha(theme.palette.primary.main, 0.25)} 100%)`,
+          background: `linear-gradient(${isRtl ? '225deg' : '135deg'}, ${alpha(theme.palette.background.default, 0.92)} 0%, ${alpha(theme.palette.background.default, 0.55)} 55%, ${alpha(theme.palette.primary.main, 0.25)} 100%)`,
         }}
       />
       <Box
@@ -76,7 +76,7 @@ function PageHero({ title, subtitle, imageUrl }: PageHeroProps) {
       >
         <Typography
           variant="h4"
-          style={{ textAlign, width: '100%' }}
+          style={{ textAlign, width: '100%', direction: dir }}
           sx={{
             fontWeight: 700,
             mb: 1,
@@ -89,7 +89,14 @@ function PageHero({ title, subtitle, imageUrl }: PageHeroProps) {
         <Typography
           variant="body1"
           color="text.secondary"
-          style={{ textAlign, width: '100%', maxWidth: 560 }}
+          style={{
+            textAlign,
+            width: '100%',
+            maxWidth: 560,
+            marginLeft: isRtl ? 'auto' : 0,
+            marginRight: isRtl ? 0 : 'auto',
+            direction: dir,
+          }}
           sx={{ textShadow: '0 1px 8px rgba(0,0,0,0.4)' }}
         >
           {subtitle}
