@@ -15,19 +15,36 @@ export function getGlassAccordionSx(theme: Theme) {
     ...getGlassPanelSx(theme),
     borderRadius: '14px !important',
     overflow: 'hidden',
+    margin: '0 !important',
     '&:before': { display: 'none' },
     '&.Mui-expanded': { margin: '0 !important' },
-    '& + &': { mt: 1.25 },
+    '& + &': { mt: '10px !important' },
   }
 }
 
 export function getGlassSummarySx(theme: Theme) {
   return {
-    minHeight: 56,
+    minHeight: '52px !important',
+    height: 52,
     px: 2,
-    '& .MuiAccordionSummary-content': { my: 1.25, alignItems: 'center' },
+    transition: 'background-color 0.2s ease',
+    '&.Mui-expanded': {
+      minHeight: '52px !important',
+      height: 52,
+    },
+    '& .MuiAccordionSummary-content': {
+      my: '0 !important',
+      alignItems: 'center',
+      '&.Mui-expanded': {
+        my: '0 !important',
+      },
+    },
     '& .MuiAccordionSummary-expandIconWrapper': {
       color: theme.palette.text.secondary,
+      transition: 'transform 0.25s ease',
+      '&.Mui-expanded': {
+        transform: 'rotate(180deg)',
+      },
     },
   }
 }

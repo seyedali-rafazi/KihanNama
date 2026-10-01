@@ -1,4 +1,5 @@
 import {
+  ArcGisMapServerImageryProvider,
   OpenStreetMapImageryProvider,
   UrlTemplateImageryProvider,
   type Viewer,
@@ -11,20 +12,21 @@ export async function applyMapType(viewer: Viewer, mapType: MapType) {
   try {
     switch (mapType) {
       case 'dark': {
-        const cartoApiKey = import.meta.env.VITE_CARTO_API_KEY
-        const url = cartoApiKey
-          ? `https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png?api_key=${cartoApiKey}`
-          : 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'
-
-        const provider = new UrlTemplateImageryProvider({
-          url,
-          subdomains: ['a', 'b', 'c', 'd'],
-          maximumLevel: 19,
-          credit: '© OpenStreetMap contributors, © CARTO',
-        })
+        // High-contrast ArcGIS World Dark Gray Canvas with countries, borders, and labels (no API key required)
+        const baseProvider = await ArcGisMapServerImageryProvider.fromUrl(
+          'https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer',
+          { enablePickFeatures: false },
+        )
         if (viewer.isDestroyed()) return
         viewer.imageryLayers.removeAll()
-        viewer.imageryLayers.addImageryProvider(provider)
+        viewer.imageryLayers.addImageryProvider(baseProvider)
+
+        const refProvider = await ArcGisMapServerImageryProvider.fromUrl(
+          'https://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer',
+          { enablePickFeatures: false },
+        )
+        if (viewer.isDestroyed()) return
+        viewer.imageryLayers.addImageryProvider(refProvider)
         break
       }
       case 'satellite': {

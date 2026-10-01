@@ -92,12 +92,10 @@ function GlobeControlPanel({
         zIndex: 10,
         width: 340,
         maxWidth: 'calc(100vw - 32px)',
-        maxHeight: 'calc(100% - 32px)',
-        overflowY: 'auto',
         direction: 'ltr',
         textAlign: 'left',
         p: 0.5,
-        '&::-webkit-scrollbar': { width: 4 },
+        overflow: 'visible',
       }}
     >
       <Accordion

@@ -15,7 +15,7 @@
 - Toggle individual satellites, zoom to a selected satellite, and adjust orbit display settings
 
 ### Map Controls
-- **Map styles:** Dark (CartoDB Dark Matter), satellite imagery (Google Satellite), and street map (OpenStreetMap)
+- **Map styles:** Dark (ArcGIS Dark Gray Canvas), satellite imagery (Google Satellite), and street map (OpenStreetMap)
 - **Navigation:** Zoom in/out, compass with north reset, fly to Iran, IP-based geolocation, and rectangular box zoom
 - **Orbit settings:** Orbit path thickness, animation speed, show/hide labels and orbit paths
 
@@ -90,7 +90,7 @@ Edit `.env`:
 VITE_CESIUM_ION_TOKEN=your_cesium_ion_token_here
 ```
 
-> **Note:** The app uses free public tile providers (CartoDB Dark Matter, Google Satellite, OpenStreetMap) for basemaps, so it runs without a token. A Cesium Ion token may still be useful for default terrain or other Ion-hosted assets.
+> **Note:** The app uses free public tile providers (ArcGIS Dark Gray Canvas, Google Satellite, OpenStreetMap) for basemaps, so it runs without a token. A Cesium Ion token may still be useful for default terrain or other Ion-hosted assets.
 
 ### 3. Start the development server
 
@@ -200,7 +200,7 @@ To add a satellite to the globe:
 | Service | Usage |
 |---------|-------|
 | [Cesium Ion](https://ion.cesium.com/) | Optional access token for Cesium assets |
-| [CartoDB Dark Matter](https://carto.com/basemaps/) | Dark basemap tiles |
+| [ArcGIS Dark Gray Canvas](https://www.arcgis.com/home/item.html?id=1e51abfa2b1a49f590516782d9a6174a) | Dark basemap tiles (Base & Reference) |
 | [Google Satellite](https://maps.google.com/) | Satellite / Earth imagery basemap |
 | [OpenStreetMap](https://www.openstreetmap.org/) | Street map basemap |
 | [ipapi.co](https://ipapi.co/) | IP-based geolocation for "Locate me" |
